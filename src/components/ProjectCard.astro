@@ -1,0 +1,89 @@
+---
+import type { ImageMetadata } from "astro";
+import MediaCarousel from "./MediaCarousel.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  images?: ImageMetadata[];
+  video?: string;
+}
+
+const { title, description, tags, images, video } = Astro.props;
+---
+
+<div class="flex flex-col overflow-hidden rounded-md border border-linea bg-white">
+  {
+    images && images.length > 0 ? (
+      <MediaCarousel images={images} alt={title} />
+    ) : video ? (
+      <div class="aspect-video overflow-hidden bg-ink/5">
+        <video
+          src={video}
+          class="h-full w-full cursor-pointer object-cover"
+          autoplay
+          muted
+          loop
+          playsinline
+          controls
+          data-fullscreen-video
+        />
+      </div>
+    ) : (
+      <div class="relative flex aspect-video items-center justify-center bg-gradient-to-br from-via to-paper">
+        <span class="absolute bottom-2.5 left-3 font-mono text-[10px] uppercase tracking-wider text-senal/70">
+          captura / vídeo pendiente
+        </span>
+      </div>
+    )
+  }
+  <div class="px-6 pb-[26px] pt-[22px]">
+    <h3 class="mb-2 font-display text-lg font-semibold">{title}</h3>
+    <p class="mb-4 text-sm leading-relaxed text-[#54575F]">{description}</p>
+    <div class="mb-4 flex flex-wrap gap-2">
+      {
+        tags.map((tag) => (
+          <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">
+            {tag}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  function enterFullscreen(video: HTMLVideoElement) {
+    const anyVideo = video as HTMLVideoElement & {
+      webkitEnterFullscreen?: () => void;
+      webkitRequestFullscreen?: () => void;
+    };
+    if (video.requestFullscreen) {
+      video.requestFullscreen();
+    } else if (anyVideo.webkitEnterFullscreen) {
+      anyVideo.webkitEnterFullscreen();
+    } else if (anyVideo.webkitRequestFullscreen) {
+      anyVideo.webkitRequestFullscreen();
+    }
+  }
+
+  function setupFullscreenVideos() {
+    document
+      .querySelectorAll<HTMLVideoElement>("[data-fullscreen-video]")
+      .forEach((video) => {
+        if (video.dataset.fullscreenBound) return;
+        video.dataset.fullscreenBound = "true";
+
+        video.addEventListener("click", (e) => {
+          const rect = video.getBoundingClientRect();
+          const controlsBarHeight = 40;
+          const clickedControls = e.clientY > rect.bottom - controlsBarHeight;
+          if (!clickedControls) enterFullscreen(video);
+        });
+      });
+  }
+
+  setupFullscreenVideos();
+  document.addEventListener("astro:page-load", setupFullscreenVideos);
+</script>

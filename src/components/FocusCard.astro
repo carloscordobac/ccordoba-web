@@ -1,0 +1,15 @@
+---
+interface Props {
+  icon: any;
+  title: string;
+  description: string;
+}
+
+const { icon: Icon, title, description } = Astro.props;
+---
+
+<div class="bg-paper p-8">
+  <Icon size={26} class="text-senal" />
+  <h3 class="mt-3 mb-2.5 font-display text-[17px] font-semibold">{title}</h3>
+  <p class="text-sm leading-relaxed text-[#54575F]">{description}</p>
+</div>

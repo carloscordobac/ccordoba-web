@@ -1,0 +1,203 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FocusCard from "../components/FocusCard.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+import TicketCheck from "@lucide/astro/icons/ticket-check";
+import DatabaseZap from "@lucide/astro/icons/database-zap";
+import Sparkles from "@lucide/astro/icons/sparkles";
+import ChartSpline from "@lucide/astro/icons/chart-spline";
+import Workflow from "@lucide/astro/icons/workflow";
+import Palette from "@lucide/astro/icons/palette";
+
+const proyectos = (await getCollection("proyectos")).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const focos = [
+  {
+    icon: TicketCheck,
+    title: "Sistemas de ticketing",
+    description:
+      "A qué me dedico en el día a día: Account-Based Ticketing, pago abierto (EMV), post-pago. La transición de los abonos prepago a modelos de pago por uso, vista desde dentro.",
+  },
+  {
+    icon: DatabaseZap,
+    title: "Datos abiertos",
+    description:
+      "Qué operadores publican de verdad sus datos en tiempo real (GTFS-RT, posiciones GPS) y qué se puede construir con ellos cuando alguien se pone a trastear.",
+  },
+  {
+    icon: Sparkles,
+    title: "Prototipado con IA",
+    description:
+      "Aquí es donde más pruebo cosas nuevas. Herramientas y visualizaciones que no habría podido construir solo, contadas con honestidad: qué funciona, qué no, y cómo lo hice.",
+  },
+  {
+    icon: ChartSpline,
+    title: "Visualización de datos",
+    description:
+      "Convertir números sueltos en algo que se entienda de un vistazo: gráficas, mapas animados, dashboards. La parte que más disfruto es cuando un CSV aburrido se convierte en algo que cuenta una historia.",
+  },
+  {
+    icon: Workflow,
+    title: "Automatización con IA",
+    description:
+      "Agentes, scripts que hacen cosas por mí mientras duermo, flujos que antes me llevaban horas y ahora se disparan solos. Aquí es donde más pruebo límites: qué se puede delegar de verdad y qué todavía necesita ojo humano.",
+  },
+  {
+    icon: Palette,
+    title: "Diseño y creatividad",
+    description:
+      "No todo es código. También trasteo con identidad de marca, juegos de cartas (ahí anda \"Vía Libre\", en construcción), y cualquier excusa para diseñar algo con mis propias manos, aunque sea a golpe de IA.",
+  },
+];
+---
+
+<BaseLayout>
+  <header class="relative overflow-hidden px-8 pb-16 pt-10">
+    <div class="mx-auto grid max-w-[1040px] items-center gap-16 lg:grid-cols-[1fr_420px]">
+      <div>
+        <div class="mb-[22px] flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.08em] text-senal">
+          <span class="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-senal"></span>
+          ccordoba.dev — laboratorio personal
+        </div>
+        <h1 class="max-w-[780px] font-display text-[38px] font-semibold leading-[1.05] tracking-[-0.015em] sm:text-[52px] lg:text-[64px]">
+          Este es mi <span class="text-senal">laboratorio</span>.
+        </h1>
+        <p class="mt-[26px] max-w-[560px] text-lg leading-relaxed text-[#4B4E56]">
+          Trabajo en la digitalización del transporte público en Renfe, y aquí
+          voy probando, rompiendo y aprendiendo cosas por mi cuenta — casi
+          siempre con datos abiertos de trenes y ayuda de IA.
+        </p>
+        <div class="mt-10 flex flex-wrap gap-3.5">
+          <a
+            href="#laboratorio"
+            class="inline-flex items-center gap-2 rounded-[3px] bg-senal px-[22px] py-[13px] font-mono text-[13px] text-white transition-transform hover:-translate-y-px"
+          >
+            Ver proyectos ↓
+          </a>
+          <a
+            href="https://linkedin.com/in/carloscordobacamacho"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-[3px] border border-linea px-[22px] py-[13px] font-mono text-[13px] text-ink transition-transform hover:-translate-y-px"
+          >
+            LinkedIn ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="relative hidden aspect-square w-full max-w-[420px] items-center justify-center lg:flex" aria-hidden="true">
+        <div class="absolute h-full w-full rounded-full bg-via/60 blur-2xl"></div>
+        <div class="absolute inset-4 rounded-full border border-dashed border-senal/35"></div>
+        <div class="absolute inset-[52px] rounded-full border border-linea"></div>
+
+        <span class="absolute left-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-anden"></span>
+        <span class="absolute right-8 top-7 h-2 w-2 rounded-full bg-senal/70"></span>
+        <span class="absolute bottom-12 right-2 h-2.5 w-2.5 animate-pulse-dot rounded-full bg-senal"></span>
+        <span class="absolute bottom-4 left-20 h-1.5 w-1.5 rounded-full bg-anden/80"></span>
+
+        <img
+          src="/images/cc-morado.png"
+          alt=""
+          class="relative h-72 w-72 drop-shadow-md"
+        />
+      </div>
+    </div>
+  </header>
+
+  <section id="quien-soy" class="relative overflow-hidden border-t border-linea px-8 py-14">
+    <img
+      src="/images/vias-senal.png"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover opacity-[0.08]"
+    />
+    <div class="relative mx-auto max-w-[1040px]">
+      <div class="mb-11 flex items-baseline gap-3.5">
+        <span class="font-mono text-[13px] text-senal">01</span>
+        <h2 class="font-display text-[28px] font-semibold">Quién soy</h2>
+      </div>
+      <div>
+        <div class="space-y-[18px] text-base leading-relaxed text-[#3C3F46] md:columns-2 md:gap-14 md:space-y-0 [&>p]:mb-[18px] [&>p]:break-inside-avoid-column">
+          <p>
+            Soy un apasionado de la tecnología, de los que no pueden ver algo
+            nuevo sin querer entender cómo funciona por dentro. Llevo desde
+            2006 metido en proyectos de tecnología de todo tipo. Empecé mi
+            carrera en consultoría, en Deloitte, donde aprendí lo que
+            significa la excelencia: exigirme más de lo que me exigían,
+            entregar trabajo de máxima calidad e ir siempre un paso más allá.
+          </p>
+          <p>
+            Luego llegué a Renfe, y con ella descubrí algo que no esperaba:
+            el mundo ferroviario y, sobre todo, la vocación de servicio
+            público. Ahora llevo ya varios años liderando la transformación
+            digital en los sistemas de viajeros, y sigo sin aburrirme.
+          </p>
+          <p>
+            Este sitio no es un currículum, es más bien mi cuaderno de
+            pruebas: un lugar donde voy documentando lo que construyo en mi
+            tiempo libre, relacionado con el transporte público y la
+            digitalización. Todo ello utilizando la IA, lo que me permite
+            aprender y desarrollar proyectos que sin ella serían imposibles.
+          </p>
+          <p>
+            No siempre sale bien a la primera, pero esa es un poco la
+            gracia: aprender en público, enseñando el proceso y no solo el
+            resultado. Y no, no hablo en nombre de Renfe, esto es cosa mía,
+            con datos públicos y ganas de aprender.
+          </p>
+          <p>
+            Lo demás ya es más terreno personal: del Atleti de toda la vida,
+            y con debilidad reconocida por los gatos (por si no habías
+            caído, ahí está el motivo de las orejas en el logo).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="que-hago" class="border-t border-linea px-8 py-14">
+    <div class="mx-auto max-w-[1040px]">
+      <div class="mb-11 flex items-baseline gap-3.5">
+        <span class="font-mono text-[13px] text-senal">02</span>
+        <h2 class="font-display text-[28px] font-semibold">Mis intereses</h2>
+      </div>
+      <div class="grid grid-cols-1 gap-px border border-linea bg-linea sm:grid-cols-2">
+        {focos.map((foco) => <FocusCard icon={foco.icon} title={foco.title} description={foco.description} />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="laboratorio" class="border-t border-linea px-8 py-14">
+    <div class="mx-auto max-w-[1040px]">
+      <div class="mb-11 flex items-baseline gap-3.5">
+        <span class="font-mono text-[13px] text-senal">03</span>
+        <h2 class="font-display text-[28px] font-semibold">El laboratorio</h2>
+      </div>
+      <p class="mb-12 text-base leading-relaxed text-[#4B4E56]">
+        Aquí va quedando lo que voy montando con datos abiertos de transporte
+        y ayuda de IA. Algunas cosas están pulidas, otras son pruebas a medio
+        hacer — lo dejo tal cual, porque el proceso también cuenta. Esto
+        crece sin calendario fijo, según voy teniendo tiempo y ganas.
+      </p>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {
+          proyectos.map((proyecto) => (
+            <ProjectCard
+              title={proyecto.data.title}
+              description={proyecto.data.description}
+              tags={proyecto.data.tags}
+              images={proyecto.data.images}
+              video={proyecto.data.video}
+            />
+          ))
+        }
+        <div class="flex items-center justify-center rounded-md border border-dashed border-linea px-4 py-3 font-mono text-xs text-[#8B8D93] sm:col-span-2">
+          + hay más cosas en marcha
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
