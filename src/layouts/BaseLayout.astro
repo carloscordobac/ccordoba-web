@@ -2,19 +2,35 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import Lightbox from "../components/Lightbox.astro";
+import SEO from "../components/SEO.astro";
 import "../styles/global.css";
 
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  type?: "website" | "article";
 }
 
 const {
-  title = "ccordoba.dev — el laboratorio de Carlos Córdoba Camacho",
+  title = "ccordoba.es — el laboratorio de Carlos Córdoba Camacho",
   description = "Laboratorio personal de Carlos Córdoba Camacho: proyectos con datos abiertos de transporte público y prototipado con IA.",
+  image,
+  type,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Carlos Córdoba Camacho",
+  url: "https://ccordoba.es",
+  sameAs: ["https://linkedin.com/in/carloscordobacamacho"],
+  jobTitle: "Jefe de proyecto",
+  worksFor: {
+    "@type": "Organization",
+    name: "Renfe Viajeros",
+  },
+};
 ---
 
 <!doctype html>
@@ -24,24 +40,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL} />
+    <SEO title={title} description={description} image={image} type={type} />
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image" content="/images/logo-morado.png" />
-    <meta property="og:url" content={canonicalURL} />
+    {/* TODO: pegar el código de verificación de Google Search Console y descomentar */}
+    {/* <meta name="google-site-verification" content="TU_CODIGO_AQUI" /> */}
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/images/logo-morado.png" />
+    {/* TODO: pegar el código de verificación de Bing Webmaster Tools y descomentar */}
+    {/* <meta name="msvalidate.01" content="TU_CODIGO_AQUI" /> */}
+
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   </head>
   <body id="top" class="bg-paper text-ink font-body antialiased">
     <Header />

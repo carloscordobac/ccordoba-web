@@ -1,4 +1,4 @@
-# BRIEFING.md — ccordoba.dev (build & deploy)
+# BRIEFING.md — ccordoba.es (build & deploy)
 
 Contexto técnico para construir y desplegar el sitio con Claude Code en
 VS Code. Sitio estático de una sola página, sin backend ni BBDD en esta v1.
@@ -12,7 +12,7 @@ VS Code. Sitio estático de una sola página, sin backend ni BBDD en esta v1.
 | Framework | **Astro** (SSG puro, sin adaptador SSR) |
 | Estilos | **Tailwind CSS** |
 | Hosting | **Cloudflare Pages** (build automático desde GitHub) |
-| Dominio | `ccordoba.dev` (Porkbun), con `ccordoba.es` como redirect |
+| Dominio | `ccordoba.es` (Porkbun), con `ccordoba.dev` como redirect |
 | Repo | GitHub |
 | Fuentes | Autoalojadas en `/public/fonts` (woff2), no CDN de Google Fonts |
 
@@ -109,5 +109,5 @@ reconstruido con componentes Astro.
 - [ ] Favicon + meta tags (Open Graph, título, descripción)
 - [ ] `git init`, primer commit, repo en GitHub
 - [ ] Conectar repo a Cloudflare Pages, confirmar build (`npm run build` → `dist`)
-- [ ] Dominio personalizado `ccordoba.dev`
-- [ ] Redirect `ccordoba.es` → `ccordoba.dev`
+- [ ] Dominio personalizado `ccordoba.es`
+- [ ] Redirect `ccordoba.dev` → `ccordoba.es`

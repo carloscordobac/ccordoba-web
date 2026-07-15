@@ -1,0 +1,67 @@
+# ccordoba.es
+
+> El laboratorio personal de Carlos Córdoba Camacho: proyectos con datos
+> abiertos de transporte público y prototipado con IA.
+
+## Quién soy
+
+Carlos Córdoba Camacho trabaja en la digitalización del transporte
+público en Renfe. Es un apasionado de la tecnología, de los que no
+pueden ver algo nuevo sin querer entender cómo funciona por dentro.
+Lleva desde 2006 metido en proyectos de tecnología de todo tipo.
+Empezó su carrera en consultoría, en Deloitte, y después llegó a
+Renfe, donde ahora lleva ya varios años liderando la transformación
+digital en los sistemas de viajeros.
+
+Este sitio no es un currículum, es su cuaderno de pruebas: un lugar
+donde documenta lo que construye en su tiempo libre, relacionado con
+el transporte público y la digitalización, casi siempre con ayuda de
+IA. No siempre sale bien a la primera, y esa es parte de la gracia:
+aprender en público, mostrando el proceso y no solo el resultado.
+
+Carlos no habla en nombre de Renfe — este es un proyecto personal,
+con datos públicos y ganas de aprender. Fuera de lo profesional: es
+del Atlético de Madrid de toda la vida y tiene debilidad reconocida
+por los gatos (de ahí las orejas del logo de la web).
+
+## Mis intereses
+
+- Sistemas de ticketing: Account-Based Ticketing, pago abierto (EMV),
+  post-pago, y la transición de los abonos prepago a modelos de pago
+  por uso.
+- Datos abiertos: qué operadores de transporte publican de verdad sus
+  datos en tiempo real (GTFS-RT, posiciones GPS) y qué se puede
+  construir con ellos.
+- Prototipado con IA: herramientas y visualizaciones construidas con
+  ayuda de IA, contadas con honestidad sobre qué funciona y qué no.
+- Visualización de datos: convertir datos en bruto en gráficas, mapas
+  animados y dashboards que se entienden de un vistazo.
+- Automatización con IA: agentes y scripts que automatizan tareas y
+  flujos que antes llevaban horas.
+- Diseño y creatividad: identidad de marca, juegos de cartas (como
+  "Vía Libre", en construcción) y diseño hecho con las propias manos,
+  a menudo con ayuda de IA.
+
+## Proyectos (El laboratorio)
+
+- Monitor de puntualidad — Renfe LD: captura cada 5 minutos los datos
+  de puntualidad en tiempo real de Renfe Larga Distancia y los
+  convierte en gráficas legibles. Tecnologías: GTFS-RT, Python, React.
+- Mapa en tiempo real — ES / US / IE: replay animado de las posiciones
+  GPS de trenes en España, Estados Unidos e Irlanda; no todos los
+  operadores publican estos datos. Tecnologías: GPS, Leaflet, Python.
+- ccordoba.es — este mismo sitio: la web que estás leyendo, construida
+  con Astro y Tailwind, diseñada y programada casi por completo con
+  ayuda de IA. Tecnologías: Astro, Tailwind, IA.
+
+El laboratorio crece sin calendario fijo, según el tiempo y las ganas
+del autor.
+
+## Contacto
+
+LinkedIn: https://linkedin.com/in/carloscordobacamacho
+
+## Aviso
+
+Este es un sitio personal. No representa la posición oficial de
+Renfe ni de ninguna otra organización mencionada.
