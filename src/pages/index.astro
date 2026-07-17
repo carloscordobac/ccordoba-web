@@ -9,6 +9,7 @@ import Sparkles from "@lucide/astro/icons/sparkles";
 import ChartSpline from "@lucide/astro/icons/chart-spline";
 import Workflow from "@lucide/astro/icons/workflow";
 import Palette from "@lucide/astro/icons/palette";
+import TestTube from "@lucide/astro/icons/test-tube";
 
 const proyectos = (await getCollection("proyectos")).sort(
   (a, b) => a.data.order - b.data.order
@@ -66,9 +67,10 @@ const focos = [
           Este es mi <span class="text-senal">laboratorio</span>.
         </h1>
         <p class="mt-[26px] max-w-[560px] text-lg leading-relaxed text-[#4B4E56]">
-          Trabajo en la digitalización del transporte público en Renfe, y aquí
-          voy probando, rompiendo y aprendiendo cosas por mi cuenta — casi
-          siempre con datos abiertos de trenes y ayuda de IA.
+          Soy Carlos Córdoba Camacho, apasionado de la tecnología y la
+          transformación digital. Aquí voy probando, rompiendo y aprendiendo
+          cosas por mi cuenta, relacionadas con movilidad y tecnología, casi
+          siempre con ayuda de IA.
         </p>
         <div class="mt-10 flex flex-wrap gap-3.5">
           <a
@@ -98,10 +100,11 @@ const focos = [
         <span class="absolute bottom-12 right-2 h-2.5 w-2.5 animate-pulse-dot rounded-full bg-senal"></span>
         <span class="absolute bottom-4 left-20 h-1.5 w-1.5 rounded-full bg-anden/80"></span>
 
-        <img
-          src="/images/cc-morado.png"
-          alt=""
-          class="relative h-72 w-72 drop-shadow-md"
+        <TestTube
+          size={240}
+          stroke-width={1.25}
+          absoluteStrokeWidth
+          class="relative text-senal drop-shadow-md"
         />
       </div>
     </div>
@@ -147,11 +150,6 @@ const focos = [
             gracia: aprender en público, enseñando el proceso y no solo el
             resultado. Y no, no hablo en nombre de Renfe, esto es cosa mía,
             con datos públicos y ganas de aprender.
-          </p>
-          <p>
-            Lo demás ya es más terreno personal: del Atleti de toda la vida,
-            y con debilidad reconocida por los gatos (por si no habías
-            caído, ahí está el motivo de las orejas en el logo).
           </p>
         </div>
       </div>
