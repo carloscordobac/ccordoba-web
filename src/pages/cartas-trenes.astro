@@ -1,0 +1,373 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TrainCardThumbnail from "../components/TrainCardThumbnail.astro";
+import TrainCardExpanded from "../components/TrainCardExpanded.astro";
+import trenesData from "../content/proyectos/cartas-trenes/trenes.json";
+
+interface Tren {
+  slug: string;
+  numero: number;
+  categoria: string;
+  categoria_slug: string;
+  nombre: string;
+  fabricante: string;
+  velocidad_texto: string;
+  potencia_texto: string;
+  masa_texto: string | null;
+  unidades_construidas: number;
+  ecologico: number;
+  historico: number;
+  hito: string;
+}
+
+const trenes = trenesData as Tren[];
+
+// Imágenes reales de cada tren (por slug). Puede haber .jpg o .png.
+const imagenesModules = import.meta.glob<ImageMetadata>(
+  "../content/proyectos/cartas-trenes/imagenes/*.{jpg,jpeg,png}",
+  { eager: true, import: "default" },
+);
+
+// Marcos SVG por categoría, incrustados como texto crudo (no <img>).
+const marcosModules = import.meta.glob<string>(
+  "../content/proyectos/cartas-trenes/marcos/*.svg",
+  { eager: true, query: "?raw", import: "default" },
+);
+
+function findAsset<T>(modules: Record<string, T>, filename: RegExp): T | undefined {
+  const match = Object.entries(modules).find(([path]) => filename.test(path));
+  return match?.[1];
+}
+
+const defaultImage = findAsset(imagenesModules, /\/default\.(jpe?g|png)$/i);
+
+// El SVG exportado de Canva trae width/height fijos (p. ej. 744x1039) en la
+// etiqueta raíz. Como está incrustado inline, los quitamos y dejamos que el
+// viewBox + preserveAspectRatio gobiernen el escalado al 100% del
+// contenedor, sea cual sea su tamaño real (miniatura o carta ampliada).
+function stripRootSvgSize(svg: string): string {
+  return svg.replace(/^<svg\b[^>]*>/, (openTag) =>
+    openTag.replace(/\s(width|height)="[^"]*"/g, ""),
+  );
+}
+
+// Cada marco SVG comparte los mismos id (clipPath, etc.) porque viene del
+// mismo generador. Como ahora CADA tren aparece incrustado dos veces a la
+// vez en la página (su miniatura en la rejilla + su carta ampliada,
+// precargada y oculta), no basta con un namespace por tren: hace falta uno
+// distinto por instancia, o los dos <svg> del mismo tren colisionarían.
+function namespaceSvgIds(svg: string, suffix: string): string {
+  const ids = new Set<string>();
+  const idMatches = svg.matchAll(/\sid="([^"]+)"/g);
+  for (const m of idMatches) ids.add(m[1]);
+
+  let result = svg;
+  for (const id of ids) {
+    const unique = `${id}-${suffix}`;
+    result = result
+      .replaceAll(`id="${id}"`, `id="${unique}"`)
+      .replaceAll(`url(#${id})`, `url(#${unique})`)
+      .replaceAll(`href="#${id}"`, `href="#${unique}"`)
+      .replaceAll(`xlink:href="#${id}"`, `xlink:href="#${unique}"`);
+  }
+  return result;
+}
+
+const cartas = await Promise.all(
+  trenes.map(async (tren) => {
+    const propia = findAsset(
+      imagenesModules,
+      new RegExp(`/${tren.slug}\\.(jpe?g|png)$`, "i"),
+    );
+    const fuente = propia ?? defaultImage;
+    const imagen = fuente
+      ? await getImage({ src: fuente, width: 560, format: "webp", quality: 78 })
+      : null;
+
+    const marcoRaw = findAsset(
+      marcosModules,
+      new RegExp(`/${tren.categoria_slug}\\.svg$`),
+    );
+    const marcoLimpio = marcoRaw ? stripRootSvgSize(marcoRaw) : "";
+
+    return {
+      ...tren,
+      numeroTexto: String(tren.numero).padStart(2, "0"),
+      imagenSrc: imagen?.src ?? "",
+      // un namespace de IDs distinto para cada instancia (miniatura / ampliada)
+      marcoMini: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-mini`) : "",
+      marcoGrande: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-grande`) : "",
+      masaTexto: tren.masa_texto ?? "—",
+      ecologicoTexto: `${tren.ecologico}/10`,
+      historicoTexto: `${tren.historico}/10`,
+    };
+  }),
+);
+
+const categorias = cartas.reduce<
+  { categoria: string; categoria_slug: string; cartas: typeof cartas }[]
+>((acc, carta) => {
+  let grupo = acc.find((g) => g.categoria_slug === carta.categoria_slug);
+  if (!grupo) {
+    grupo = { categoria: carta.categoria, categoria_slug: carta.categoria_slug, cartas: [] };
+    acc.push(grupo);
+  }
+  grupo.cartas.push(carta);
+  return acc;
+}, []);
+---
+
+<BaseLayout
+  title="Cartas de trenes — vista previa | ccordoba.es"
+  description="Galería de cartas coleccionables de trenes de Renfe. Vista previa privada, aún sin publicar."
+  noindex
+>
+  <section class="border-t border-linea px-8 py-14">
+    <div class="mx-auto max-w-[1040px]">
+      <div class="mb-14">
+        <p class="mb-1.5 font-mono text-[13px] uppercase tracking-[0.08em] text-senal">
+          Vista previa privada
+        </p>
+        <h1 class="font-display text-[28px] font-semibold">Cartas de trenes</h1>
+      </div>
+
+      {
+        categorias.map((grupo) => (
+          <div class="mb-16 last:mb-0">
+            <h2 class="mb-5 font-display text-lg font-semibold text-ink">
+              {grupo.categoria}
+            </h2>
+            <ul class="cartas-grid">
+              {grupo.cartas.map((carta) => (
+                <li>
+                  <TrainCardThumbnail
+                    slug={carta.slug}
+                    categoria={carta.categoria}
+                    numeroTexto={carta.numeroTexto}
+                    nombre={carta.nombre}
+                    fabricante={carta.fabricante}
+                    imagenSrc={carta.imagenSrc}
+                    marco={carta.marcoMini}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <div id="carta-overlay" class="carta-overlay"></div>
+
+  {
+    cartas.map((carta) => (
+      <TrainCardExpanded
+        slug={carta.slug}
+        categoria={carta.categoria}
+        numeroTexto={carta.numeroTexto}
+        nombre={carta.nombre}
+        fabricante={carta.fabricante}
+        imagenSrc={carta.imagenSrc}
+        marco={carta.marcoGrande}
+        velocidad_texto={carta.velocidad_texto}
+        potencia_texto={carta.potencia_texto}
+        masaTexto={carta.masaTexto}
+        unidades_construidas={carta.unidades_construidas}
+        ecologicoTexto={carta.ecologicoTexto}
+        historicoTexto={carta.historicoTexto}
+        hito={carta.hito}
+      />
+    ))
+  }
+</BaseLayout>
+
+<style is:global>
+  @font-face {
+    font-family: "Sora";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/sora-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Sora";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/sora-500.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Sora";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/sora-700.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/jetbrains-mono-400.woff2") format("woff2");
+  }
+</style>
+
+<style>
+  .cartas-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  @media (min-width: 480px) {
+    .cartas-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+  }
+
+  @media (min-width: 720px) {
+    .cartas-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .cartas-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+  }
+
+  .carta-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 7, 10, 0.75);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+    z-index: 900;
+  }
+  .carta-overlay.is-visible {
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carta-overlay {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function setupCartas() {
+    const overlayEl = document.getElementById("carta-overlay");
+    const thumbnails = document.querySelectorAll<HTMLElement>(".carta-mini");
+    if (!overlayEl) return;
+    const overlay = overlayEl;
+
+    let activeExpanded: HTMLElement | null = null;
+    let activeThumb: HTMLElement | null = null;
+
+    function findExpanded(slug: string): HTMLElement | null {
+      return document.querySelector<HTMLElement>(`.carta-grande[data-slug="${slug}"]`);
+    }
+
+    function openCard(thumb: HTMLElement) {
+      if (activeExpanded) return;
+      const slug = thumb.dataset.slug;
+      if (!slug) return;
+      const expanded = findExpanded(slug);
+      if (!expanded) return;
+
+      const firstRect = thumb.getBoundingClientRect();
+      expanded.classList.add("is-active");
+      const lastRect = expanded.getBoundingClientRect();
+
+      const dx =
+        firstRect.left + firstRect.width / 2 - (lastRect.left + lastRect.width / 2);
+      const dy =
+        firstRect.top + firstRect.height / 2 - (lastRect.top + lastRect.height / 2);
+      const scale = firstRect.width / lastRect.width;
+
+      expanded.style.transition = "none";
+      expanded.style.transform = `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(${scale}) rotate(-6deg)`;
+
+      // Forzar reflow para que el navegador registre el estado inicial
+      // antes de animar al estado final.
+      void expanded.offsetWidth;
+
+      overlay.classList.add("is-visible");
+
+      requestAnimationFrame(() => {
+        overlay.style.opacity = "1";
+        expanded.style.transition = "transform 420ms cubic-bezier(.2,.85,.25,1)";
+        expanded.style.transform = "translate(-50%, -50%) scale(1) rotate(0deg)";
+      });
+
+      thumb.style.opacity = "0";
+      document.body.style.overflow = "hidden";
+
+      activeExpanded = expanded;
+      activeThumb = thumb;
+    }
+
+    function closeExpanded() {
+      if (!activeExpanded || !activeThumb) return;
+      const expanded = activeExpanded;
+      const thumb = activeThumb;
+
+      const firstRect = thumb.getBoundingClientRect();
+      const lastRect = expanded.getBoundingClientRect();
+      const dx =
+        firstRect.left + firstRect.width / 2 - (lastRect.left + lastRect.width / 2);
+      const dy =
+        firstRect.top + firstRect.height / 2 - (lastRect.top + lastRect.height / 2);
+      const scale = firstRect.width / lastRect.width;
+
+      overlay.style.opacity = "0";
+      expanded.style.transition = "transform 360ms cubic-bezier(.4,0,.2,1)";
+      expanded.style.transform = `translate(-50%, -50%) translate(${dx}px, ${dy}px) scale(${scale}) rotate(-4deg)`;
+
+      const onEnd = () => {
+        expanded.removeEventListener("transitionend", onEnd);
+        expanded.classList.remove("is-active");
+        thumb.style.opacity = "";
+        overlay.classList.remove("is-visible");
+        document.body.style.overflow = "";
+      };
+      expanded.addEventListener("transitionend", onEnd, { once: true });
+
+      activeExpanded = null;
+      activeThumb = null;
+    }
+
+    thumbnails.forEach((thumb) => {
+      thumb.addEventListener("click", () => openCard(thumb));
+      thumb.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openCard(thumb);
+        }
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>(".carta-grande").forEach((expanded) => {
+      expanded.addEventListener("click", (e) => e.stopPropagation());
+    });
+
+    overlay.addEventListener("click", closeExpanded);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeExpanded();
+    });
+  }
+
+  setupCartas();
+  document.addEventListener("astro:page-load", setupCartas);
+</script>

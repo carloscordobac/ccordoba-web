@@ -1,0 +1,132 @@
+---
+interface Props {
+  slug: string;
+  categoria: string;
+  numeroTexto: string;
+  nombre: string;
+  fabricante: string;
+  imagenSrc: string;
+  marco: string;
+}
+
+const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, marco } = Astro.props;
+---
+
+<div
+  class="carta-mini"
+  tabindex="0"
+  role="button"
+  aria-label={`Ver detalle de ${nombre}`}
+  data-slug={slug}
+>
+  <img class="capa foto" src={imagenSrc} alt="" loading="lazy" decoding="async" />
+  <div class="capa marco" set:html={marco} />
+  <div class="scrim" aria-hidden="true" />
+  <div class="capa contenido">
+    <p class="categoria">{categoria}</p>
+    <p class="numero">{numeroTexto}</p>
+    <div class="info">
+      <p class="nombre">{nombre}</p>
+      <p class="fabricante">{fabricante}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .carta-mini {
+    position: relative;
+    aspect-ratio: 558 / 779.25;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    background: #0c0c10;
+    outline-offset: 4px;
+  }
+  .carta-mini:focus-visible {
+    outline: 2px solid #9fc9c4;
+  }
+
+  .capa {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .foto {
+    object-fit: cover;
+    z-index: 1;
+    filter: contrast(1.08) saturate(0.88) sepia(0.08) hue-rotate(-4deg) brightness(0.96);
+  }
+
+  .marco {
+    z-index: 2;
+    pointer-events: none;
+  }
+  .marco :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* degradado inferior para que nombre/fabricante se lean sobre la foto */
+  .scrim {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 42%;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(to top, rgba(8, 7, 12, 0.85), rgba(8, 7, 12, 0) 100%);
+  }
+
+  .contenido {
+    z-index: 3;
+    pointer-events: none;
+    font-family: "Sora", sans-serif;
+  }
+
+  .categoria {
+    position: absolute;
+    top: 6%;
+    left: 8%;
+    margin: 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 7.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #dcd6e8;
+  }
+
+  .numero {
+    position: absolute;
+    top: 5%;
+    right: 6%;
+    margin: 0;
+    font-weight: 700;
+    font-size: 11px;
+    color: #fff;
+  }
+
+  .info {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 9%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .nombre {
+    margin: 0;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .fabricante {
+    margin: 0;
+    font-weight: 500;
+    font-size: 8.5px;
+    color: #cfc9db;
+  }
+</style>

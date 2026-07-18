@@ -1,0 +1,250 @@
+---
+interface Props {
+  slug: string;
+  categoria: string;
+  numeroTexto: string;
+  nombre: string;
+  fabricante: string;
+  imagenSrc: string;
+  marco: string;
+  velocidad_texto: string;
+  potencia_texto: string;
+  masaTexto: string;
+  unidades_construidas: number;
+  ecologicoTexto: string;
+  historicoTexto: string;
+  hito: string;
+}
+
+const {
+  slug,
+  categoria,
+  numeroTexto,
+  nombre,
+  fabricante,
+  imagenSrc,
+  marco,
+  velocidad_texto,
+  potencia_texto,
+  masaTexto,
+  unidades_construidas,
+  ecologicoTexto,
+  historicoTexto,
+  hito,
+} = Astro.props;
+---
+
+<div class="carta-grande" data-slug={slug} aria-hidden="true">
+  <img class="capa foto" src={imagenSrc} alt="" decoding="async" />
+  <div class="capa marco" set:html={marco} />
+  <div class="capa contenido">
+    <p class="numero">{numeroTexto}</p>
+
+    <div class="info">
+      <p class="categoria">{categoria}</p>
+      <p class="nombre">{nombre}</p>
+      <p class="fabricante">{fabricante}</p>
+    </div>
+
+    <dl class="atributos">
+      <div class="columna">
+        <div class="atributo">
+          <dt>Velocidad</dt>
+          <dd>{velocidad_texto}</dd>
+        </div>
+        <div class="atributo">
+          <dt>Masa</dt>
+          <dd>{masaTexto}</dd>
+        </div>
+        <div class="atributo">
+          <dt>Ecológico</dt>
+          <dd>{ecologicoTexto}</dd>
+        </div>
+      </div>
+      <div class="columna">
+        <div class="atributo">
+          <dt>Potencia</dt>
+          <dd>{potencia_texto}</dd>
+        </div>
+        <div class="atributo">
+          <dt>Unidades</dt>
+          <dd>{unidades_construidas}</dd>
+        </div>
+        <div class="atributo">
+          <dt>Histórico</dt>
+          <dd>{historicoTexto}</dd>
+        </div>
+      </div>
+    </dl>
+
+    <p class="hito">{hito}</p>
+  </div>
+</div>
+
+<style>
+  /*
+    Tamaño fijo en píxeles (con tope responsive vía min()), independiente
+    del tamaño de la rejilla. aspect-ratio mantiene la proporción real de
+    la plantilla (558 x 779.25) sea cual sea el ancho resultante.
+  */
+  .carta-grande {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: min(90vw, 500px);
+    aspect-ratio: 558 / 779.25;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0c0c10;
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    cursor: default;
+
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+  .carta-grande.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .capa {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .foto {
+    object-fit: cover;
+    z-index: 1;
+    filter: contrast(1.08) saturate(0.88) sepia(0.08) hue-rotate(-4deg) brightness(0.96);
+  }
+
+  .marco {
+    z-index: 2;
+    pointer-events: none;
+  }
+  .marco :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .contenido {
+    z-index: 3;
+    pointer-events: none;
+    font-family: "Sora", sans-serif;
+  }
+
+  .categoria {
+    margin: 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #dcd6e8;
+  }
+
+  .numero {
+    position: absolute;
+    top: 4%;
+    right: 5%;
+    margin: 0;
+    font-weight: 700;
+    font-size: 23px;
+    color: #fff;
+  }
+
+  .info {
+    position: absolute;
+    top: 3%;
+    left: 7%;
+    right: 9%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .nombre {
+    margin: 0;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .fabricante {
+    margin: 0;
+    font-weight: 500;
+    font-size: 15px;
+    color: #fff;
+    opacity: 0.85;
+  }
+
+  .atributos {
+    position: absolute;
+    top: 73%;
+    left: 9%;
+    right: 9%;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 28px;
+  }
+  .columna {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    min-width: 0;
+  }
+  .atributo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5em;
+    min-width: 0;
+  }
+  .atributos dt {
+    flex-shrink: 0;
+    font-family: "Sora", sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #fff;
+    opacity: 0.65;
+  }
+  .atributos dd {
+    margin: 0;
+    min-width: 0;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.1;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hito {
+    position: absolute;
+    top: 88.5%;
+    left: 9%;
+    right: 9%;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.3;
+    color: #e6e1ef;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carta-grande {
+      transition: none !important;
+    }
+  }
+</style>
