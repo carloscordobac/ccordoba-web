@@ -3,12 +3,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import FocusCard from "../components/FocusCard.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import { getCollection } from "astro:content";
-import TicketCheck from "@lucide/astro/icons/ticket-check";
-import DatabaseZap from "@lucide/astro/icons/database-zap";
-import Sparkles from "@lucide/astro/icons/sparkles";
+import CreditCard from "@lucide/astro/icons/credit-card";
 import ChartSpline from "@lucide/astro/icons/chart-spline";
+import FlaskConical from "@lucide/astro/icons/flask-conical";
 import Workflow from "@lucide/astro/icons/workflow";
 import Palette from "@lucide/astro/icons/palette";
+import ClipboardList from "@lucide/astro/icons/clipboard-list";
 
 const proyectos = (await getCollection("proyectos")).sort(
   (a, b) => a.data.order - b.data.order
@@ -16,40 +16,40 @@ const proyectos = (await getCollection("proyectos")).sort(
 
 const focos = [
   {
-    icon: TicketCheck,
-    title: "Sistemas de ticketing",
+    icon: CreditCard,
+    title: "Sistemas de pago y ticketing",
     description:
-      "A qué me dedico en el día a día: Account-Based Ticketing, pago abierto (EMV), post-pago. La transición de los abonos prepago a modelos de pago por uso, vista desde dentro.",
-  },
-  {
-    icon: DatabaseZap,
-    title: "Datos abiertos",
-    description:
-      "Qué operadores publican de verdad sus datos en tiempo real (GTFS-RT, posiciones GPS) y qué se puede construir con ellos cuando alguien se pone a trastear.",
-  },
-  {
-    icon: Sparkles,
-    title: "Prototipado con IA",
-    description:
-      "Aquí es donde más pruebo cosas nuevas. Herramientas y visualizaciones que no habría podido construir solo, contadas con honestidad: qué funciona, qué no, y cómo lo hice.",
+      "Diseño de soluciones de comercialización: Account-Based Ticketing, pago abierto (EMV), modelos de post-pago. La evolución de los sistemas tradicionales hacia modelos de pago por uso.",
   },
   {
     icon: ChartSpline,
-    title: "Visualización de datos",
+    title: "Información",
     description:
-      "Convertir números sueltos en algo que se entienda de un vistazo: gráficas, mapas animados, dashboards. La parte que más disfruto es cuando un CSV aburrido se convierte en algo que cuenta una historia.",
+      "Obtener datos en tiempo real y convertirlos en algo que se entienda de un vistazo: gráficas, mapas animados, dashboards. Cuando una hoja de datos aburrida se convierte en algo que cuenta una historia.",
+  },
+  {
+    icon: FlaskConical,
+    title: "Prototipado",
+    description:
+      "La idea en movimiento: construcción ágil de visualizaciones, pruebas de concepto (PoC), y cualquier herramienta funcional que permita validar hipótesis y alinear equipos antes de dar luz verde.",
   },
   {
     icon: Workflow,
-    title: "Automatización con IA",
+    title: "Automatización",
     description:
-      "Agentes, scripts que hacen cosas por mí mientras duermo, flujos que antes me llevaban horas y ahora se disparan solos. Aquí es donde más pruebo límites: qué se puede delegar de verdad y qué todavía necesita ojo humano.",
+      "Scripts que hacen cosas por mí mientras duermo, flujos que antes me llevaban horas y ahora se disparan solos. Aquí es donde más pruebo límites: qué se puede delegar de verdad y qué todavía necesita ojo humano.",
   },
   {
     icon: Palette,
-    title: "Diseño y creatividad",
+    title: "Diseño de producto",
     description:
-      "No todo es código. También trasteo con identidad de marca, juegos de cartas (ahí anda \"Vía Libre\", en construcción), y cualquier excusa para diseñar algo con mis propias manos, aunque sea a golpe de IA.",
+      "Más allá del código: identidad de marca, prototipos visuales, y cualquier proyecto que combine funcionalidad y estética, de principio a fin.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Gestión de proyectos",
+    description:
+      "Coordinar equipos y proveedores, liderar iniciativas complejas en entornos de alta criticidad, y llevarlas de la idea a la entrega. La parte menos visible de todo esto, pero la que sostiene lo demás.",
   },
 ];
 ---
