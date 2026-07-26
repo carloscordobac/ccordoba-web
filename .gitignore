@@ -26,5 +26,8 @@ pnpm-debug.log*
 # material de referencia, no forma parte del sitio
 archivador/
 
+# bandeja de entrada temporal para que Claude procese archivos
+Temp/
+
 # configuración local de Claude Code (permisos de esta máquina/sesión)
 .claude/settings.local.json
