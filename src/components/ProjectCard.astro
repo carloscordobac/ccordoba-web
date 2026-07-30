@@ -8,9 +8,12 @@ interface Props {
   tags: string[];
   images?: ImageMetadata[];
   video?: string;
+  link?: string;
 }
 
-const { title, description, tags, images, video } = Astro.props;
+const { title, description, tags, images, video, link } = Astro.props;
+const tieneEnlace = Boolean(link && link !== "#");
+const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
 ---
 
 <div class="flex flex-col overflow-hidden rounded-md border border-linea bg-white">
@@ -41,7 +44,7 @@ const { title, description, tags, images, video } = Astro.props;
   <div class="px-6 pb-[26px] pt-[22px]">
     <h3 class="mb-2 font-display text-lg font-semibold">{title}</h3>
     <p class="mb-4 text-sm leading-relaxed text-[#54575F]">{description}</p>
-    <div class="mb-4 flex flex-wrap gap-2">
+    <div class={tieneEnlace ? "mb-4 flex flex-wrap gap-2" : "flex flex-wrap gap-2"}>
       {
         tags.map((tag) => (
           <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">
@@ -50,6 +53,18 @@ const { title, description, tags, images, video } = Astro.props;
         ))
       }
     </div>
+    {
+      tieneEnlace && (
+        <a
+          href={link}
+          target={esExterno ? "_blank" : undefined}
+          rel={esExterno ? "noopener noreferrer" : undefined}
+          class="inline-flex items-center gap-1.5 font-mono text-[12px] text-senal transition-opacity hover:opacity-70"
+        >
+          Abrir proyecto {esExterno ? "↗" : "→"}
+        </a>
+      )
+    }
   </div>
 </div>
 

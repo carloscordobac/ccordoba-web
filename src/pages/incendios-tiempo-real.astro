@@ -1,0 +1,390 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Incendios en tiempo real España | ccordoba.es"
+  description="Mapa con detecciones térmicas por satélite (NASA FIRMS, VIIRS) sobre España, actualizado cada 15 minutos. Filtra por periodo y consulta la situación casi en tiempo real."
+>
+  <section class="border-t border-linea">
+    <div class="mx-auto max-w-[1040px] px-8 py-14">
+      <h1 class="mb-3 font-display text-[28px] font-semibold">Incendios en tiempo real</h1>
+      <p class="max-w-[720px] text-base leading-relaxed text-[#4B4E56]">
+        Mapa con detecciones térmicas por satélite (NASA FIRMS, sensor VIIRS) sobre España,
+        actualizado cada 15 minutos.
+      </p>
+
+      <div class="mt-10 space-y-7">
+        <div>
+          <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">Qué es esto</h2>
+          <p class="text-[15px] leading-relaxed text-[#4B4E56]">
+            Un visor que muestra, casi en tiempo real, los focos de calor detectados por
+            satélite sobre España. No es un mapa de "incendios confirmados", sino de anomalías
+            térmicas: la inmensa mayoría corresponde a incendios reales, pero también puede
+            recoger quemas agrícolas u otras fuentes de calor intensas.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">
+            De dónde vienen los datos
+          </h2>
+          <p class="text-[15px] leading-relaxed text-[#4B4E56]">
+            De NASA FIRMS (Fire Information for Resource Management System), que procesa las
+            detecciones del sensor VIIRS a bordo de tres satélites (Suomi NPP, NOAA-20 y
+            NOAA-21). Los datos se actualizan cada 15 minutos, con una resolución de
+            aproximadamente 375 metros por punto detectado.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">
+            Qué puedes hacer aquí
+          </h2>
+          <p class="text-[15px] leading-relaxed text-[#4B4E56]">
+            Filtrar por periodo (últimas 24h, 48h o 7 días).
+          </p>
+        </div>
+
+        <div class="rounded-md border border-senal/25 bg-via/50 px-5 py-4">
+          <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">Qué no es</h2>
+          <p class="text-[15px] leading-relaxed text-[#3C3F46]">
+            No es un sistema de alerta ni una herramienta operativa. Para información oficial
+            sobre incendios activos, evacuaciones o riesgo en tu zona, consulta siempre los
+            canales de Protección Civil y los servicios de emergencia autonómicos.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="firms-map-wrap" class="relative h-[480px] w-full sm:h-[560px] lg:h-[640px]">
+      <div id="firms-map" class="absolute inset-0"></div>
+
+      <div
+        class="panel-flotante absolute left-4 top-4 z-[1000] flex gap-1 rounded-lg p-1"
+      >
+        <button data-period="24" class="periodo-btn is-active" type="button">24h</button>
+        <button data-period="48" class="periodo-btn" type="button">48h</button>
+        <button data-period="7" class="periodo-btn" type="button">7 días</button>
+      </div>
+
+      <div class="panel-flotante absolute right-4 top-4 z-[1000] rounded-lg px-3.5 py-2.5">
+        <p class="font-mono text-[10px] uppercase tracking-wider text-white/50">
+          Última actualización
+        </p>
+        <p id="firms-updated" class="font-mono text-[13px] text-white">—</p>
+      </div>
+
+      <div class="panel-flotante absolute bottom-4 left-4 z-[1000] max-w-[420px] rounded-lg px-4 py-3.5">
+        <p class="mb-1 font-mono text-[10px] uppercase tracking-wider text-anden">Aviso</p>
+        <p class="text-[12.5px] leading-relaxed text-white/85">
+          Detecciones automáticas por satélite (resolución de ~375 m), no un sistema de alerta
+          oficial. Para emergencias reales, consulta los canales de Protección Civil (112).
+        </p>
+        <p class="mt-2 text-[11px] leading-relaxed text-white/50">
+          Datos: NASA FIRMS (VIIRS), NASA LANCE / ESDIS.
+          <a
+            href="https://firms.modaps.eosdis.nasa.gov/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline hover:text-white"
+          >
+            firms.modaps.eosdis.nasa.gov
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  #firms-map-wrap {
+    background: #17181c;
+  }
+
+  .panel-flotante {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(35, 38, 43, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .periodo-btn {
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .periodo-btn:hover {
+    color: #fff;
+  }
+  .periodo-btn.is-active {
+    background: #6b4e8e;
+    color: #fff;
+  }
+
+  :global(.leaflet-control-attribution) {
+    background: rgba(35, 38, 43, 0.72) !important;
+    color: rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(10px);
+  }
+  :global(.leaflet-control-attribution a) {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+  :global(.leaflet-control-zoom a) {
+    background: rgba(35, 38, 43, 0.85) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  :global(.leaflet-control-zoom a:hover) {
+    background: rgba(107, 78, 142, 0.85) !important;
+  }
+
+  :global(.geo-control) {
+    position: relative;
+  }
+  :global(.geo-btn) {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(35, 38, 43, 0.85);
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background-color 0.15s;
+  }
+  :global(.geo-btn:hover) {
+    background: rgba(107, 78, 142, 0.85);
+  }
+  :global(.geo-btn[aria-busy="true"]) {
+    cursor: wait;
+    opacity: 0.75;
+  }
+  :global(.geo-btn svg) {
+    width: 16px;
+    height: 16px;
+  }
+  :global(.geo-btn .geo-spin) {
+    animation: geo-girar 0.8s linear infinite;
+  }
+  @keyframes geo-girar {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  :global(.geo-aviso) {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    width: 210px;
+    max-width: 60vw;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(35, 38, 43, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 10px 12px;
+    font-family: Inter, sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  :global(.geo-aviso button) {
+    margin-top: 6px;
+    border: 0;
+    background: none;
+    padding: 0;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: #9fc9c4;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  import L from "leaflet";
+  import "leaflet/dist/leaflet.css";
+
+  const LAYER_BY_PERIOD: Record<string, string> = {
+    "24": "fires_viirs_24",
+    "48": "fires_viirs_48",
+    "7": "fires_viirs_7",
+  };
+
+  const REFRESH_MS = 15 * 60 * 1000;
+
+  function formatearAhora(): string {
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Madrid",
+    }).format(new Date());
+  }
+
+  const mapEl = document.getElementById("firms-map");
+  const updatedEl = document.getElementById("firms-updated");
+  const botones = document.querySelectorAll<HTMLButtonElement>(".periodo-btn");
+
+  if (mapEl) {
+    const map = L.map(mapEl, {
+      center: [40.2, -3.7],
+      zoom: 6,
+      minZoom: 5,
+      maxZoom: 10,
+      zoomControl: false,
+    });
+
+    L.control.zoom({ position: "bottomright" }).addTo(map);
+
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+      subdomains: "abcd",
+      maxZoom: 20,
+      attribution:
+        '&copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>, ' +
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
+    }).addTo(map);
+
+    let periodoActual = "24";
+
+    const capaFuegos = L.tileLayer.wms("/api/firms-tile", {
+      layers: LAYER_BY_PERIOD[periodoActual],
+      format: "image/png",
+      transparent: true,
+      version: "1.1.1",
+      attribution: "NASA FIRMS (VIIRS)",
+    }).addTo(map);
+
+    function marcarActualizado() {
+      if (updatedEl) updatedEl.textContent = formatearAhora();
+    }
+
+    marcarActualizado();
+    setInterval(() => {
+      capaFuegos.redraw();
+      marcarActualizado();
+    }, REFRESH_MS);
+
+    botones.forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const periodo = boton.dataset.period ?? "24";
+        if (periodo === periodoActual) return;
+        periodoActual = periodo;
+        capaFuegos.setParams({ layers: LAYER_BY_PERIOD[periodo] });
+        botones.forEach((b) => b.classList.toggle("is-active", b === boton));
+        marcarActualizado();
+      });
+    });
+
+    // Botón "geolocalizarme": centra el mapa en la posición del usuario.
+    // Nunca se pide la ubicación de forma automática, solo al pulsar.
+    if ("geolocation" in navigator) {
+      const ICONO_PIN =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+        'stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />' +
+        '<circle cx="12" cy="10" r="3" /></svg>';
+
+      const ICONO_CARGANDO =
+        '<svg class="geo-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+        'stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg>';
+
+      let marcadorUbicacion: L.CircleMarker | null = null;
+      let ocultarAvisoTimeout: ReturnType<typeof setTimeout> | undefined;
+
+      const GeolocateControl = L.Control.extend({
+        options: { position: "bottomright" },
+        onAdd() {
+          const contenedor = L.DomUtil.create("div", "leaflet-control geo-control");
+          const boton = L.DomUtil.create("button", "geo-btn", contenedor) as HTMLButtonElement;
+          boton.type = "button";
+          boton.title = "Usar mi ubicación";
+          boton.setAttribute("aria-label", "Centrar el mapa en mi ubicación");
+          boton.innerHTML = ICONO_PIN;
+
+          const aviso = L.DomUtil.create("div", "geo-aviso", contenedor) as HTMLDivElement;
+          aviso.hidden = true;
+
+          L.DomEvent.disableClickPropagation(contenedor);
+          L.DomEvent.disableScrollPropagation(contenedor);
+
+          function mostrarAviso(mensaje: string) {
+            aviso.innerHTML = "";
+            const texto = document.createElement("p");
+            texto.textContent = mensaje;
+            aviso.appendChild(texto);
+
+            const reintentar = document.createElement("button");
+            reintentar.type = "button";
+            reintentar.textContent = "Reintentar";
+            reintentar.addEventListener("click", () => {
+              aviso.hidden = true;
+              solicitarUbicacion();
+            });
+            aviso.appendChild(reintentar);
+
+            aviso.hidden = false;
+            clearTimeout(ocultarAvisoTimeout);
+            ocultarAvisoTimeout = setTimeout(() => {
+              aviso.hidden = true;
+            }, 8000);
+          }
+
+          function ponerCargando(cargando: boolean) {
+            boton.disabled = cargando;
+            boton.setAttribute("aria-busy", String(cargando));
+            boton.innerHTML = cargando ? ICONO_CARGANDO : ICONO_PIN;
+          }
+
+          function solicitarUbicacion() {
+            ponerCargando(true);
+            navigator.geolocation.getCurrentPosition(
+              (posicion) => {
+                ponerCargando(false);
+                const { latitude, longitude } = posicion.coords;
+
+                if (marcadorUbicacion) marcadorUbicacion.remove();
+                marcadorUbicacion = L.circleMarker([latitude, longitude], {
+                  radius: 8,
+                  color: "#9fc9c4",
+                  weight: 2,
+                  fillColor: "#9fc9c4",
+                  fillOpacity: 0.45,
+                }).addTo(map);
+                marcadorUbicacion.bindTooltip("Tu ubicación", { direction: "top" });
+
+                map.flyTo([latitude, longitude], 11);
+              },
+              (error) => {
+                ponerCargando(false);
+                mostrarAviso(
+                  "No se pudo acceder a tu ubicación, revisa los permisos del navegador."
+                );
+                void error;
+              },
+              { enableHighAccuracy: false, timeout: 8000 }
+            );
+          }
+
+          L.DomEvent.on(boton, "click", solicitarUbicacion);
+
+          return contenedor;
+        },
+      });
+
+      new GeolocateControl().addTo(map);
+    }
+  }
+</script>

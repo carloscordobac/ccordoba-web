@@ -53,6 +53,10 @@ por los gatos (de ahí las orejas del logo de la web).
 - ccordoba.es — este mismo sitio: la web que estás leyendo, construida
   con Astro y Tailwind, diseñada y programada casi por completo con
   ayuda de IA. Tecnologías: Astro, Tailwind, IA.
+- Incendios en tiempo real España: mapa con las detecciones térmicas
+  por satélite de NASA FIRMS (sensor VIIRS) sobre España, actualizado
+  cada 15 minutos, con filtro por periodo (24h, 48h o 7 días).
+  Tecnologías: FIRMS, Leaflet, Tiempo real.
 
 El laboratorio crece sin calendario fijo, según el tiempo y las ganas
 del autor.
