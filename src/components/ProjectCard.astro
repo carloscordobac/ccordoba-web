@@ -59,9 +59,12 @@ const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
           href={link}
           target={esExterno ? "_blank" : undefined}
           rel={esExterno ? "noopener noreferrer" : undefined}
-          class="inline-flex items-center gap-1.5 font-mono text-[12px] text-senal transition-opacity hover:opacity-70"
+          class="group inline-flex min-h-11 items-center gap-2 rounded-[3px] bg-senal px-[18px] py-[11px] font-mono text-[13px] text-paper transition-transform hover:-translate-y-px"
         >
-          Abrir proyecto {esExterno ? "↗" : "→"}
+          Abrir proyecto
+          <span class="inline-block transition-transform group-hover:translate-x-1">
+            {esExterno ? "↗" : "→"}
+          </span>
         </a>
       )
     }
