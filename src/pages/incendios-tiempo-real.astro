@@ -57,7 +57,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
 
-    <div id="firms-map-wrap" class="relative h-[480px] w-full sm:h-[560px] lg:h-[640px]">
+    <div id="firms-map-wrap" class="relative w-full sm:h-[560px] lg:h-[640px]">
       <div id="firms-map" class="absolute inset-0"></div>
 
       <div
@@ -75,19 +75,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <p id="firms-updated" class="font-mono text-[13px] text-white">—</p>
       </div>
 
-      <div class="panel-flotante absolute bottom-4 left-4 z-[1000] max-w-[420px] rounded-lg px-4 py-3.5">
-        <p class="mb-1 font-mono text-[10px] uppercase tracking-wider text-anden">Aviso</p>
-        <p class="text-[12.5px] leading-relaxed text-white/85">
+    </div>
+
+    <div class="px-8 py-6">
+      <div class="mx-auto max-w-[1040px] rounded-md border border-senal/25 bg-via/50 px-5 py-4">
+        <p class="mb-1 font-mono text-[10px] uppercase tracking-wider text-senal">Aviso</p>
+        <p class="text-[13px] leading-relaxed text-[#3C3F46]">
           Detecciones automáticas por satélite (resolución de ~375 m), no un sistema de alerta
           oficial. Para emergencias reales, consulta los canales de Protección Civil (112).
         </p>
-        <p class="mt-2 text-[11px] leading-relaxed text-white/50">
+        <p class="mt-2 text-[12px] leading-relaxed text-[#6B6E76]">
           Datos: NASA FIRMS (VIIRS), NASA LANCE / ESDIS.
           <a
             href="https://firms.modaps.eosdis.nasa.gov/"
             target="_blank"
             rel="noopener noreferrer"
-            class="underline hover:text-white"
+            class="underline hover:text-senal"
           >
             firms.modaps.eosdis.nasa.gov
           </a>
@@ -100,6 +103,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <style>
   #firms-map-wrap {
     background: #17181c;
+  }
+
+  /* En móvil el mapa ocupa (casi) toda la pantalla, restando la altura del
+     header, en vez de un alto fijo pequeño. A partir de "sm" mandan las
+     alturas fijas de siempre (sin cambios en escritorio). */
+  @media (max-width: 639px) {
+    #firms-map-wrap {
+      height: calc(100vh - 58px);
+      height: calc(100dvh - 58px);
+    }
   }
 
   .panel-flotante {
@@ -248,6 +261,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     });
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
+
+    // En algunos móviles el contenedor no tiene su altura final calculada en
+    // el momento en que Leaflet se inicializa (p. ej. mientras el navegador
+    // aún está ajustando la barra de direcciones), lo que deja el mapa con
+    // un encuadre/zoom incorrecto. Forzamos un recálculo tras montar y ante
+    // cualquier cambio de tamaño u orientación.
+    requestAnimationFrame(() => map.invalidateSize());
+
+    let redimensionadoTimeout: ReturnType<typeof setTimeout>;
+    function alRedimensionar() {
+      clearTimeout(redimensionadoTimeout);
+      redimensionadoTimeout = setTimeout(() => map.invalidateSize(), 150);
+    }
+    window.addEventListener("resize", alRedimensionar);
+    window.addEventListener("orientationchange", alRedimensionar);
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
       subdomains: "abcd",
