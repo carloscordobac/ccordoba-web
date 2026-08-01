@@ -1,0 +1,193 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Galeria {
+  imagen: ImageMetadata;
+  caption: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  link?: string;
+  video?: string;
+  objetivo?: string;
+  datos?: {
+    fuente: string;
+    frecuencia: string;
+    limitaciones: string;
+  } | null;
+  arquitectura?: {
+    stack: string[];
+    notas: string;
+  };
+  galeria?: Galeria[];
+  cuerpo_titulo: string;
+  estado_actual?: string;
+}
+
+const {
+  title,
+  description,
+  tags,
+  video,
+  objetivo,
+  datos,
+  arquitectura,
+  galeria,
+  cuerpo_titulo,
+  estado_actual,
+} = Astro.props;
+
+const fotos = galeria
+  ? await Promise.all(
+      galeria.map(async (foto) => ({
+        caption: foto.caption,
+        img: await getImage({ src: foto.imagen, width: 960, format: "webp", quality: 82 }),
+      })),
+    )
+  : [];
+
+// OG image: la primera foto de la galería si existe, si no, la que
+// SEO.astro usa por defecto (/images/og-default.png).
+const ogImage = fotos.length > 0 ? fotos[0].img.src : undefined;
+---
+
+<BaseLayout title={`${title} | ccordoba.es`} description={description} image={ogImage}>
+  <section class="border-t border-linea">
+    <div class="mx-auto max-w-[1040px] px-8 py-14">
+      <a
+        href="/#laboratorio"
+        class="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] text-senal transition-opacity hover:opacity-70"
+      >
+        ← Volver al laboratorio
+      </a>
+
+      <h1 class="mb-3 font-display text-[28px] font-semibold sm:text-[34px]">{title}</h1>
+      <p class="text-base leading-relaxed text-[#4B4E56]">{description}</p>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        {
+          tags.map((tag) => (
+            <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
+
+      {
+        objetivo && (
+          <div class="mt-10">
+            <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">Objetivo</h2>
+            <p class="text-[15px] leading-relaxed text-[#4B4E56]">{objetivo}</p>
+          </div>
+        )
+      }
+
+      {
+        video && (
+          <div class="mt-10 aspect-video overflow-hidden rounded-md bg-ink/5">
+            <video
+              src={video}
+              class="h-full w-full object-cover"
+              autoplay
+              muted
+              loop
+              playsinline
+              controls
+            />
+          </div>
+        )
+      }
+
+      {
+        fotos.length > 0 && (
+          <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {fotos.map(({ img, caption }) => (
+              <figure class="overflow-hidden rounded-md border border-linea">
+                <img
+                  src={img.src}
+                  width={img.attributes.width}
+                  height={img.attributes.height}
+                  alt={caption}
+                  class="aspect-video w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption class="px-3.5 py-2.5 font-mono text-[11px] text-[#8B8D93]">
+                  {caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="prose-proyecto mt-10">
+        <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">{cuerpo_titulo}</h2>
+        <div class="space-y-4 text-[15px] leading-relaxed text-[#4B4E56]">
+          <slot />
+        </div>
+      </div>
+
+      {
+        datos && (
+          <div class="mt-10">
+            <h2 class="mb-3 font-display text-[16px] font-semibold text-ink">Datos</h2>
+            <dl class="space-y-3">
+              <div>
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-senal">Fuente</dt>
+                <dd class="text-[15px] leading-relaxed text-[#4B4E56]">{datos.fuente}</dd>
+              </div>
+              <div>
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-senal">
+                  Frecuencia
+                </dt>
+                <dd class="text-[15px] leading-relaxed text-[#4B4E56]">{datos.frecuencia}</dd>
+              </div>
+              {datos.limitaciones && (
+                <div>
+                  <dt class="font-mono text-[10px] uppercase tracking-wider text-senal">
+                    Limitaciones
+                  </dt>
+                  <dd class="text-[15px] leading-relaxed text-[#4B4E56]">{datos.limitaciones}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+        )
+      }
+
+      {
+        arquitectura && (
+          <div class="mt-10">
+            <h2 class="mb-3 font-display text-[16px] font-semibold text-ink">Arquitectura</h2>
+            <div class="mb-3 flex flex-wrap gap-2">
+              {arquitectura.stack.map((pieza) => (
+                <span class="rounded-full border border-linea px-[9px] py-1 font-mono text-[10.5px] text-ink">
+                  {pieza}
+                </span>
+              ))}
+            </div>
+            <p class="text-[15px] leading-relaxed text-[#4B4E56]">{arquitectura.notas}</p>
+          </div>
+        )
+      }
+
+      {
+        estado_actual && (
+          <div class="mt-10 rounded-md border border-senal/25 bg-via/50 px-5 py-4">
+            <p class="mb-1 font-mono text-[10px] uppercase tracking-wider text-senal">
+              Estado actual
+            </p>
+            <p class="text-[13px] leading-relaxed text-[#3C3F46]">{estado_actual}</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

@@ -5,13 +5,13 @@ import MediaCarousel from "./MediaCarousel.astro";
 interface Props {
   title: string;
   description: string;
-  tags: string[];
+  categorias?: string[];
   images?: ImageMetadata[];
   video?: string;
   link?: string;
 }
 
-const { title, description, tags, images, video, link } = Astro.props;
+const { title, description, categorias = [], images, video, link } = Astro.props;
 const tieneEnlace = Boolean(link && link !== "#");
 const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
 ---
@@ -42,17 +42,19 @@ const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
     )
   }
   <div class="px-6 pb-[26px] pt-[22px]">
-    <h3 class="mb-2 font-display text-lg font-semibold">{title}</h3>
-    <p class="mb-4 text-sm leading-relaxed text-[#54575F]">{description}</p>
-    <div class={tieneEnlace ? "mb-4 flex flex-wrap gap-2" : "flex flex-wrap gap-2"}>
+    <div class="mb-2 flex flex-wrap gap-2">
       {
-        tags.map((tag) => (
+        categorias.map((categoria) => (
           <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">
-            {tag}
+            {categoria}
           </span>
         ))
       }
     </div>
+    <h3 class="mb-2 font-display text-lg font-semibold">{title}</h3>
+    <p class={tieneEnlace ? "mb-4 text-sm leading-relaxed text-[#54575F]" : "text-sm leading-relaxed text-[#54575F]"}>
+      {description}
+    </p>
     {
       tieneEnlace && (
         <a

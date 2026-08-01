@@ -1,0 +1,35 @@
+---
+import { getCollection, render } from "astro:content";
+import ProjectLayout from "../../layouts/ProjectLayout.astro";
+
+export async function getStaticPaths() {
+  const proyectos = await getCollection("proyectos");
+  return proyectos
+    // "incendios-tiempo-real" ya tiene su propia página con el visor en vivo
+    // (/incendios-tiempo-real/); no le hace falta esta página genérica.
+    .filter((proyecto) => proyecto.id !== "incendios-tiempo-real")
+    .map((proyecto) => ({
+      params: { slug: proyecto.id },
+      props: { proyecto },
+    }));
+}
+
+const { proyecto } = Astro.props;
+const { Content } = await render(proyecto);
+---
+
+<ProjectLayout
+  title={proyecto.data.title}
+  description={proyecto.data.description}
+  tags={proyecto.data.tags}
+  link={proyecto.data.link}
+  video={proyecto.data.video}
+  objetivo={proyecto.data.objetivo}
+  datos={proyecto.data.datos}
+  arquitectura={proyecto.data.arquitectura}
+  galeria={proyecto.data.galeria}
+  cuerpo_titulo={proyecto.data.cuerpo_titulo}
+  estado_actual={proyecto.data.estado_actual}
+>
+  <Content />
+</ProjectLayout>

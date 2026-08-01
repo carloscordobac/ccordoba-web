@@ -7,7 +7,12 @@ const proyectos = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(),
+      // Stack técnico: se usa en la página de detalle (/proyectos/[slug]).
       tags: z.array(z.string()),
+      // Categorías de tipo de proyecto (Datos abiertos, Tiempo real, Mapa...):
+      // se usan en la tarjeta de la home, encima del título. Campo aparte de
+      // "tags" a propósito, para no mezclar stack técnico con categoría.
+      categorias: z.array(z.string()).optional(),
       link: z.string(),
       order: z.number(),
       // Capturas del proyecto (una o varias): coloca los archivos (jpg/png/webp)
@@ -18,6 +23,39 @@ const proyectos = defineCollection({
       // Vídeo de portada (opcional, sustituye a las imágenes si está presente):
       // sube el .mp4 a /public/videos/ y pon aquí la ruta, p. ej. "/videos/mi-video.mp4".
       video: z.string().optional(),
+
+      // Campos opcionales para la página de detalle (/proyectos/[slug]).
+      // Si un proyecto no los define, esa sección se omite en el layout.
+      objetivo: z.string().optional(),
+      datos: z
+        .object({
+          fuente: z.string(),
+          frecuencia: z.string(),
+          limitaciones: z.string().optional(),
+        })
+        .nullable()
+        .optional(),
+      arquitectura: z
+        .object({
+          stack: z.array(z.string()),
+          notas: z.string(),
+        })
+        .optional(),
+      // Galería con pie de foto para la página de detalle. Independiente de
+      // "images" (que alimenta el carrusel de la tarjeta en la home).
+      galeria: z
+        .array(
+          z.object({
+            imagen: image(),
+            caption: z.string(),
+          }),
+        )
+        .optional(),
+      // Título de la sección de cuerpo (el contenido Markdown del archivo).
+      // Por defecto "Cómo funciona"; algún proyecto especial puede cambiarlo
+      // (p. ej. "Cómo está construida" para ccordoba-web).
+      cuerpo_titulo: z.string().default("Cómo funciona"),
+      estado_actual: z.string().optional(),
     }),
 });
 
