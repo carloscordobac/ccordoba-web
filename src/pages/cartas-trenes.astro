@@ -1,4 +1,6 @@
 ---
+import fs from "node:fs";
+import path from "node:path";
 import { getImage } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -42,6 +44,30 @@ function findAsset<T>(modules: Record<string, T>, filename: RegExp): T | undefin
 }
 
 const defaultImage = findAsset(imagenesModules, /\/default\.(jpe?g|png)$/i);
+
+// Imágenes de acuarela (por slug): viven en public/, sin pasar por el
+// pipeline de astro:assets, así que comprobamos su existencia a mano en
+// build. Si un tren no tiene la suya, y tampoco existe un default de
+// acuarela todavía, usamos su foto real como sustituto temporal (mejor
+// que una imagen rota) hasta que se suba el lote completo.
+const ACUARELA_DIR = path.resolve("./public/proyectos/cartas-trenes/imagenes-acuarela");
+const ACUARELA_URL_BASE = "/proyectos/cartas-trenes/imagenes-acuarela";
+
+function resolverAcuarela(slug: string, fallbackFoto: string): string {
+  if (fs.existsSync(path.join(ACUARELA_DIR, `${slug}.jpg`))) {
+    return `${ACUARELA_URL_BASE}/${slug}.jpg`;
+  }
+  if (fs.existsSync(path.join(ACUARELA_DIR, `${slug}.png`))) {
+    return `${ACUARELA_URL_BASE}/${slug}.png`;
+  }
+  if (fs.existsSync(path.join(ACUARELA_DIR, "default.jpg"))) {
+    return `${ACUARELA_URL_BASE}/default.jpg`;
+  }
+  if (fs.existsSync(path.join(ACUARELA_DIR, "default.png"))) {
+    return `${ACUARELA_URL_BASE}/default.png`;
+  }
+  return fallbackFoto;
+}
 
 // El SVG exportado de Canva trae width/height fijos (p. ej. 744x1039) en la
 // etiqueta raíz. Como está incrustado inline, los quitamos y dejamos que el
@@ -92,10 +118,13 @@ const cartas = await Promise.all(
     );
     const marcoLimpio = marcoRaw ? stripRootSvgSize(marcoRaw) : "";
 
+    const imagenSrc = imagen?.src ?? "";
+
     return {
       ...tren,
       numeroTexto: String(tren.numero).padStart(2, "0"),
-      imagenSrc: imagen?.src ?? "",
+      imagenSrc,
+      acuarelaSrc: resolverAcuarela(tren.slug, imagenSrc),
       // un namespace de IDs distinto para cada instancia (miniatura / ampliada)
       marcoMini: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-mini`) : "",
       marcoGrande: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-grande`) : "",
@@ -124,13 +153,30 @@ const categorias = cartas.reduce<
   description="Galería de cartas coleccionables de trenes de Renfe. Vista previa privada, aún sin publicar."
   noindex
 >
+  <script is:inline>
+    (function () {
+      try {
+        if (localStorage.getItem("modo-visualizacion-trenes") === "acuarela") {
+          document.body.classList.add("modo-acuarela");
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <section class="border-t border-linea px-8 py-14">
     <div class="mx-auto max-w-[1040px]">
-      <div class="mb-14">
-        <p class="mb-1.5 font-mono text-[13px] uppercase tracking-[0.08em] text-senal">
-          Vista previa privada
-        </p>
-        <h1 class="font-display text-[28px] font-semibold">Cartas de trenes</h1>
+      <div class="mb-14 flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p class="mb-1.5 font-mono text-[13px] uppercase tracking-[0.08em] text-senal">
+            Vista previa privada
+          </p>
+          <h1 class="font-display text-[28px] font-semibold">Cartas de trenes</h1>
+        </div>
+
+        <div class="modo-toggle" role="group" aria-label="Modo de visualización">
+          <button type="button" class="modo-btn" data-modo="foto">Foto</button>
+          <button type="button" class="modo-btn" data-modo="acuarela">Acuarela</button>
+        </div>
       </div>
 
       {
@@ -149,6 +195,7 @@ const categorias = cartas.reduce<
                     nombre={carta.nombre}
                     fabricante={carta.fabricante}
                     imagenSrc={carta.imagenSrc}
+                    acuarelaSrc={carta.acuarelaSrc}
                     marco={carta.marcoMini}
                   />
                 </li>
@@ -171,6 +218,7 @@ const categorias = cartas.reduce<
         nombre={carta.nombre}
         fabricante={carta.fabricante}
         imagenSrc={carta.imagenSrc}
+        acuarelaSrc={carta.acuarelaSrc}
         marco={carta.marcoGrande}
         velocidad_texto={carta.velocidad_texto}
         potencia_texto={carta.potencia_texto}
@@ -216,6 +264,33 @@ const categorias = cartas.reduce<
 </style>
 
 <style>
+  .modo-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #f2f0ec;
+    border: 1px solid #e7e4de;
+  }
+  .modo-btn {
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: #6b6e76;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .modo-btn:hover {
+    color: #23262b;
+  }
+  .modo-btn.is-active {
+    background: #6b4e8e;
+    color: #fff;
+  }
+
   .cartas-grid {
     list-style: none;
     margin: 0;
@@ -370,4 +445,39 @@ const categorias = cartas.reduce<
 
   setupCartas();
   document.addEventListener("astro:page-load", setupCartas);
+
+  function setupModoVisualizacion() {
+    const botones = document.querySelectorAll<HTMLButtonElement>(".modo-btn");
+    if (botones.length === 0) return;
+
+    function modoActual(): "foto" | "acuarela" {
+      return document.body.classList.contains("modo-acuarela") ? "acuarela" : "foto";
+    }
+
+    function actualizarBotones() {
+      const activo = modoActual();
+      botones.forEach((boton) => {
+        boton.classList.toggle("is-active", boton.dataset.modo === activo);
+      });
+    }
+
+    actualizarBotones();
+
+    botones.forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const modo = boton.dataset.modo === "acuarela" ? "acuarela" : "foto";
+        document.body.classList.toggle("modo-acuarela", modo === "acuarela");
+        try {
+          localStorage.setItem("modo-visualizacion-trenes", modo);
+        } catch (e) {
+          // localStorage puede no estar disponible (modo privado, etc.):
+          // el interruptor sigue funcionando, solo no se recuerda la próxima visita.
+        }
+        actualizarBotones();
+      });
+    });
+  }
+
+  setupModoVisualizacion();
+  document.addEventListener("astro:page-load", setupModoVisualizacion);
 </script>

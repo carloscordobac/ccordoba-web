@@ -6,10 +6,12 @@ interface Props {
   nombre: string;
   fabricante: string;
   imagenSrc: string;
+  acuarelaSrc: string;
   marco: string;
 }
 
-const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, marco } = Astro.props;
+const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc, marco } =
+  Astro.props;
 ---
 
 <div
@@ -19,7 +21,14 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, marco } = A
   aria-label={`Ver detalle de ${nombre}`}
   data-slug={slug}
 >
-  <img class="capa foto" src={imagenSrc} alt="" loading="lazy" decoding="async" />
+  <img class="capa foto foto-real" src={imagenSrc} alt="" loading="lazy" decoding="async" />
+  <img
+    class="capa foto foto-acuarela"
+    src={acuarelaSrc}
+    alt=""
+    loading="lazy"
+    decoding="async"
+  />
   <div class="capa marco" set:html={marco} />
   <div class="scrim" aria-hidden="true" />
   <div class="capa contenido">
@@ -54,9 +63,28 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, marco } = A
   }
 
   .foto {
+    /* Sangra 2px más allá del contenedor para que no se asome un filo de
+       1-2px del fondo de la imagen (blanco, sobre todo en las acuarelas)
+       por redondeo de subpíxel entre el <img> y el overflow:hidden de la
+       carta. El border-radius del contenedor sigue recortando todo. */
+    position: absolute;
+    inset: -2px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
     object-fit: cover;
     z-index: 1;
+  }
+  .foto-real {
     filter: contrast(1.08) saturate(0.88) sepia(0.08) hue-rotate(-4deg) brightness(0.96);
+  }
+  .foto-acuarela {
+    display: none;
+  }
+  :global(body.modo-acuarela) .foto-real {
+    display: none;
+  }
+  :global(body.modo-acuarela) .foto-acuarela {
+    display: block;
   }
 
   .marco {
