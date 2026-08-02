@@ -8,6 +8,7 @@ interface Props {
   imagenSrc: string;
   acuarelaSrc: string;
   marco: string;
+  colorCategoria: string;
   velocidad_texto: string;
   potencia_texto: string;
   masaTexto: string;
@@ -26,6 +27,7 @@ const {
   imagenSrc,
   acuarelaSrc,
   marco,
+  colorCategoria,
   velocidad_texto,
   potencia_texto,
   masaTexto,
@@ -39,48 +41,55 @@ const {
 <div class="carta-grande" data-slug={slug} aria-hidden="true">
   <img class="capa foto foto-real" src={imagenSrc} alt="" decoding="async" />
   <img class="capa foto foto-acuarela" src={acuarelaSrc} alt="" decoding="async" />
-  <div class="capa marco" set:html={marco} />
-  <div class="capa contenido">
-    <p class="numero">{numeroTexto}</p>
 
+  <div class="cabecera">
+    <div class="banda" style={`background:${colorCategoria}`} aria-hidden="true" />
     <div class="info">
       <p class="categoria">{categoria}</p>
       <p class="nombre">{nombre}</p>
       <p class="fabricante">{fabricante}</p>
     </div>
+  </div>
 
-    <dl class="atributos">
-      <div class="columna">
-        <div class="atributo">
-          <dt>Velocidad</dt>
-          <dd>{velocidad_texto}</dd>
-        </div>
-        <div class="atributo">
-          <dt>Masa</dt>
-          <dd>{masaTexto}</dd>
-        </div>
-        <div class="atributo">
-          <dt>Ecológico</dt>
-          <dd>{ecologicoTexto}</dd>
-        </div>
-      </div>
-      <div class="columna">
-        <div class="atributo">
-          <dt>Potencia</dt>
-          <dd>{potencia_texto}</dd>
-        </div>
-        <div class="atributo">
-          <dt>Unidades</dt>
-          <dd>{unidades_construidas}</dd>
-        </div>
-        <div class="atributo">
-          <dt>Histórico</dt>
-          <dd>{historicoTexto}</dd>
-        </div>
-      </div>
-    </dl>
+  <div class="capa marco" set:html={marco} />
+  <p class="numero">{numeroTexto}</p>
 
-    <p class="hito">{hito}</p>
+  <div class="pie">
+    <div class="banda" style={`background:${colorCategoria}`} aria-hidden="true" />
+    <div class="pie-contenido">
+      <dl class="atributos">
+        <div class="columna">
+          <div class="atributo">
+            <dt>Velocidad</dt>
+            <dd>{velocidad_texto}</dd>
+          </div>
+          <div class="atributo">
+            <dt>Masa</dt>
+            <dd>{masaTexto}</dd>
+          </div>
+          <div class="atributo">
+            <dt>Ecológico</dt>
+            <dd>{ecologicoTexto}</dd>
+          </div>
+        </div>
+        <div class="columna">
+          <div class="atributo">
+            <dt>Potencia</dt>
+            <dd>{potencia_texto}</dd>
+          </div>
+          <div class="atributo">
+            <dt>Unidades</dt>
+            <dd>{unidades_construidas}</dd>
+          </div>
+          <div class="atributo">
+            <dt>Histórico</dt>
+            <dd>{historicoTexto}</dd>
+          </div>
+        </div>
+      </dl>
+
+      <p class="hito">{hito}</p>
+    </div>
   </div>
 </div>
 
@@ -102,6 +111,7 @@ const {
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
     z-index: 1000;
     cursor: default;
+    font-family: "Sora", sans-serif;
 
     visibility: hidden;
     opacity: 0;
@@ -146,20 +156,51 @@ const {
     display: block;
   }
 
-  .marco {
+  /*
+    Orden de capas (foto → bandas de color → marco → texto): .cabecera y
+    .pie no llevan z-index propio para no crear un contexto de apilamiento
+    que atrape a sus hijos — así .banda (z-index:2) queda siempre por
+    debajo del marco (z-index:3) y el texto (z-index:4) siempre por
+    encima, aunque banda y texto compartan la misma celda de grid.
+
+    La banda ocupa el 100% del ancho y llega justo al borde de la carta
+    (.cabecera/.pie sin padding/margin propios); su altura se ajusta sola
+    al contenido real porque comparte celda de grid con el texto: la fila
+    se dimensiona por el texto (único con altura intrínseca) y la banda,
+    con height:100%, hereda esa misma altura.
+  */
+  .cabecera,
+  .pie {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: grid;
+    pointer-events: none;
+  }
+  .cabecera {
+    top: 0;
+  }
+  .pie {
+    bottom: 0;
+  }
+
+  .cabecera .banda,
+  .pie .banda {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
     z-index: 2;
+  }
+
+  .marco {
+    z-index: 3;
     pointer-events: none;
   }
   .marco :global(svg) {
     display: block;
     width: 100%;
     height: 100%;
-  }
-
-  .contenido {
-    z-index: 3;
-    pointer-events: none;
-    font-family: "Sora", sans-serif;
   }
 
   .categoria {
@@ -175,6 +216,7 @@ const {
     position: absolute;
     top: 4%;
     right: 5%;
+    z-index: 4;
     margin: 0;
     font-weight: 700;
     font-size: 23px;
@@ -182,10 +224,10 @@ const {
   }
 
   .info {
-    position: absolute;
-    top: 3%;
-    left: 7%;
-    right: 9%;
+    grid-area: 1 / 1;
+    z-index: 4;
+    /* Texto 3px más abajo que antes (padding-top); abajo se deja igual. */
+    padding: 23px 9% 20px 7%;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -205,11 +247,19 @@ const {
     opacity: 0.85;
   }
 
+  .pie-contenido {
+    grid-area: 1 / 1;
+    z-index: 4;
+    /* Abajo, más aire que arriba: la banda llega hasta el borde de la
+       carta (bottom:0), pero el texto tiene que quedarse antes de la
+       placa "ccordoba.es" que dibuja el marco en esa misma zona. */
+    padding: 10px 9% 8%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
   .atributos {
-    position: absolute;
-    top: 73%;
-    left: 9%;
-    right: 9%;
     margin: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -250,10 +300,6 @@ const {
   }
 
   .hito {
-    position: absolute;
-    top: 88.5%;
-    left: 9%;
-    right: 9%;
     margin: 0;
     font-size: 11px;
     line-height: 1.3;

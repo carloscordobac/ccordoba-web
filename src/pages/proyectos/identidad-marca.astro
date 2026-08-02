@@ -20,9 +20,19 @@ const { Content } = await render(entry);
       <h1 class="mb-3 font-display text-[28px] font-semibold sm:text-[34px]">
         {entry.data.title}
       </h1>
-      <p class="mb-14 text-base leading-relaxed text-[#4B4E56]">
+      <p class="mb-3 text-base leading-relaxed text-[#4B4E56]">
         {entry.data.description}
       </p>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        {
+          entry.data.tags.map((tag) => (
+            <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">
+              {tag}
+            </span>
+          ))
+        }
+      </div>
     </div>
   </section>
 

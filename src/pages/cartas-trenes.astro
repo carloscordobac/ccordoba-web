@@ -32,11 +32,41 @@ const imagenesModules = import.meta.glob<ImageMetadata>(
   { eager: true, import: "default" },
 );
 
-// Marcos SVG por categoría, incrustados como texto crudo (no <img>).
+// Marco SVG único para todas las categorías (el color ya no va incrustado
+// en el SVG: se aplica por encima con CSS, ver COLOR_CATEGORIA).
 const marcosModules = import.meta.glob<string>(
   "../content/proyectos/cartas-trenes/marcos/*.svg",
   { eager: true, query: "?raw", import: "default" },
 );
+const marcoUniversal = Object.values(marcosModules)[0];
+
+// Mismo color por categoría que llevaba incrustado cada marco SVG antes de
+// unificarlos en uno solo: se extrajo de la "ola" de cada uno para no
+// perder la asociación categoria → color ya establecida en el proyecto.
+const COLOR_CATEGORIA: Record<string, string> = {
+  "alta-velocidad": "#1652a8",
+  "ancho-metrico": "#6e2c2c",
+  "ancho-variable": "#2e6e8e",
+  avant: "#3e8fb0",
+  cercanias: "#2e8b57",
+  "larga-distancia": "#5b4b8a",
+  "media-distancia": "#2e8e8e",
+  mercancias: "#8a4b2f",
+  "trenes-turisticos": "#9a6b2c",
+};
+
+// Opacidad fija de la capa de color de categoría detrás de los bloques de
+// texto (cabecera / pie). rgba() en vez de opacity para no atenuar también
+// el texto que se pinta encima en el mismo elemento.
+const OPACIDAD_BANDA = 0.9;
+
+function hexToRgba(hex: string, alpha: number): string {
+  const limpio = hex.replace("#", "");
+  const r = parseInt(limpio.slice(0, 2), 16);
+  const g = parseInt(limpio.slice(2, 4), 16);
+  const b = parseInt(limpio.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 function findAsset<T>(modules: Record<string, T>, filename: RegExp): T | undefined {
   const match = Object.entries(modules).find(([path]) => filename.test(path));
@@ -112,11 +142,7 @@ const cartas = await Promise.all(
       ? await getImage({ src: fuente, width: 560, format: "webp", quality: 78 })
       : null;
 
-    const marcoRaw = findAsset(
-      marcosModules,
-      new RegExp(`/${tren.categoria_slug}\\.svg$`),
-    );
-    const marcoLimpio = marcoRaw ? stripRootSvgSize(marcoRaw) : "";
+    const marcoLimpio = marcoUniversal ? stripRootSvgSize(marcoUniversal) : "";
 
     const imagenSrc = imagen?.src ?? "";
 
@@ -125,6 +151,7 @@ const cartas = await Promise.all(
       numeroTexto: String(tren.numero).padStart(2, "0"),
       imagenSrc,
       acuarelaSrc: resolverAcuarela(tren.slug, imagenSrc),
+      colorCategoria: hexToRgba(COLOR_CATEGORIA[tren.categoria_slug] ?? "#6b4e8e", OPACIDAD_BANDA),
       // un namespace de IDs distinto para cada instancia (miniatura / ampliada)
       marcoMini: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-mini`) : "",
       marcoGrande: marcoLimpio ? namespaceSvgIds(marcoLimpio, `${tren.slug}-grande`) : "",
@@ -197,6 +224,7 @@ const categorias = cartas.reduce<
                     imagenSrc={carta.imagenSrc}
                     acuarelaSrc={carta.acuarelaSrc}
                     marco={carta.marcoMini}
+                    colorCategoria={carta.colorCategoria}
                   />
                 </li>
               ))}
@@ -220,6 +248,7 @@ const categorias = cartas.reduce<
         imagenSrc={carta.imagenSrc}
         acuarelaSrc={carta.acuarelaSrc}
         marco={carta.marcoGrande}
+        colorCategoria={carta.colorCategoria}
         velocidad_texto={carta.velocidad_texto}
         potencia_texto={carta.potencia_texto}
         masaTexto={carta.masaTexto}

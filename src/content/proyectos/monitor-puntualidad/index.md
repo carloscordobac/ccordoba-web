@@ -4,7 +4,7 @@ description: "Captura cada 5 minutos los datos de puntualidad en tiempo real de 
 tags: ["GTFS-RT", "Python", "React"]
 categorias: ["Datos abiertos", "Tiempo real", "Dashboard"]
 link: "/proyectos/monitor-puntualidad/"
-order: 1
+order: 3
 images:
   - "./01-resumen.png"
   - "./02-trenes-activos.png"

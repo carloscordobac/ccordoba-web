@@ -8,10 +8,20 @@ interface Props {
   imagenSrc: string;
   acuarelaSrc: string;
   marco: string;
+  colorCategoria: string;
 }
 
-const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc, marco } =
-  Astro.props;
+const {
+  slug,
+  categoria,
+  numeroTexto,
+  nombre,
+  fabricante,
+  imagenSrc,
+  acuarelaSrc,
+  marco,
+  colorCategoria,
+} = Astro.props;
 ---
 
 <div
@@ -29,11 +39,17 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc
     loading="lazy"
     decoding="async"
   />
-  <div class="capa marco" set:html={marco} />
-  <div class="scrim" aria-hidden="true" />
-  <div class="capa contenido">
+
+  <div class="cabecera">
+    <div class="banda" style={`background:${colorCategoria}`} aria-hidden="true" />
     <p class="categoria">{categoria}</p>
-    <p class="numero">{numeroTexto}</p>
+  </div>
+
+  <div class="capa marco" set:html={marco} />
+  <p class="numero">{numeroTexto}</p>
+
+  <div class="pie">
+    <div class="banda" style={`background:${colorCategoria}`} aria-hidden="true" />
     <div class="info">
       <p class="nombre">{nombre}</p>
       <p class="fabricante">{fabricante}</p>
@@ -50,6 +66,7 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc
     cursor: pointer;
     background: #0c0c10;
     outline-offset: 4px;
+    font-family: "Sora", sans-serif;
   }
   .carta-mini:focus-visible {
     outline: 2px solid #9fc9c4;
@@ -87,8 +104,45 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc
     display: block;
   }
 
-  .marco {
+  /*
+    Orden de capas (foto → bandas de color → marco → texto): .cabecera y
+    .pie no llevan z-index propio para no crear un contexto de apilamiento
+    que atrape a sus hijos — así .banda (z-index:2) queda siempre por
+    debajo del marco (z-index:3) y el texto (z-index:4) siempre por
+    encima, aunque banda y texto compartan la misma celda de grid.
+
+    La banda ocupa el 100% del ancho y llega justo al borde de la carta
+    (.cabecera/.pie sin padding/margin propios); su altura se ajusta sola
+    al contenido real porque comparte celda de grid con el texto: la fila
+    se dimensiona por el texto (único con altura intrínseca) y la banda,
+    con height:100%, hereda esa misma altura.
+  */
+  .cabecera,
+  .pie {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: grid;
+    pointer-events: none;
+  }
+  .cabecera {
+    top: 0;
+  }
+  .pie {
+    bottom: 0;
+  }
+
+  .cabecera .banda,
+  .pie .banda {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
     z-index: 2;
+  }
+
+  .marco {
+    z-index: 3;
     pointer-events: none;
   }
   .marco :global(svg) {
@@ -97,38 +151,26 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc
     height: 100%;
   }
 
-  /* degradado inferior para que nombre/fabricante se lean sobre la foto */
-  .scrim {
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 42%;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(to top, rgba(8, 7, 12, 0.85), rgba(8, 7, 12, 0) 100%);
-  }
-
-  .contenido {
-    z-index: 3;
-    pointer-events: none;
-    font-family: "Sora", sans-serif;
-  }
-
   .categoria {
-    position: absolute;
-    top: 6%;
-    left: 8%;
+    grid-area: 1 / 1;
+    z-index: 4;
     margin: 0;
+    /* Texto 3px más abajo (padding-top) y banda 3px menos alta en total
+       (top+bottom suma 3px menos que antes): solo en la miniatura. */
+    padding: 23px 8% 14px;
     font-family: "JetBrains Mono", monospace;
-    font-size: 7.5px;
+    font-size: 9px;
+    font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: #dcd6e8;
+    color: #fff;
   }
 
   .numero {
     position: absolute;
     top: 5%;
     right: 6%;
+    z-index: 4;
     margin: 0;
     font-weight: 700;
     font-size: 11px;
@@ -136,10 +178,12 @@ const { slug, categoria, numeroTexto, nombre, fabricante, imagenSrc, acuarelaSrc
   }
 
   .info {
-    position: absolute;
-    left: 7%;
-    right: 7%;
-    bottom: 9%;
+    grid-area: 1 / 1;
+    z-index: 4;
+    /* Abajo, más aire que arriba: la banda llega hasta el borde de la
+       carta (bottom:0), pero el texto tiene que quedarse antes de la
+       placa "ccordoba.es" que dibuja el marco en esa misma zona. */
+    padding: 10px 7% 8%;
     display: flex;
     flex-direction: column;
     gap: 3px;

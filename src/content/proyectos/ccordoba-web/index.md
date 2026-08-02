@@ -4,7 +4,7 @@ description: "El laboratorio en el que estás ahora mismo: una web construida co
 tags: ["Astro", "Tailwind", "IA"]
 categorias: ["Web"]
 link: "/proyectos/ccordoba-web/"
-order: 4
+order: 2
 images:
   - "./01-portada.png"
 objetivo: "Tener un sitio propio donde documentar el resto de proyectos, y de paso servir como ejemplo en sí mismo de hasta dónde se puede llegar hoy prototipando con asistencia de IA sin ser desarrollador web de formación."

@@ -4,7 +4,7 @@ description: "Replay animado de las posiciones GPS de trenes en España, Estados
 tags: ["GPS", "Leaflet", "Python"]
 categorias: ["Datos abiertos", "Tiempo real", "Mapa"]
 link: "/proyectos/mapa-tiempo-real/"
-order: 2
+order: 4
 video: "/videos/mapa-tiempo-real.mp4"
 objetivo: "Ver el movimiento real de los trenes sobre el mapa, no solo datos tabulados, y de paso comparar qué operadores ferroviarios del mundo publican de verdad su posición GPS en abierto y cuáles no."
 datos:

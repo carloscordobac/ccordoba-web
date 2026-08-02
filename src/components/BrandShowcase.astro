@@ -55,12 +55,43 @@ const colores = [
   },
 ];
 
+const tipografias = [
+  {
+    clase: "muestra-display",
+    muestra: "ccordoba",
+    meta: "Space Grotesk · 700 · 72px",
+    uso: "Logotipo — uso exclusivo en imagen estática",
+  },
+  {
+    clase: "muestra-sora",
+    muestra: "Sistemas abiertos e interoperables",
+    meta: "Sora · 500 · 34px",
+    uso: "Documentos y plantillas editables",
+  },
+  {
+    clase: "muestra-inter",
+    muestra: "Para todo lo que se lee con calma: documentación, artículos, contenido largo.",
+    meta: "Inter · 400 · 17px",
+    uso: "Cuerpo de texto",
+  },
+  {
+    clase: "muestra-mono",
+    muestra: "94.2% puntualidad · 15min",
+    meta: "IBM Plex Mono · 400 · 26px",
+    uso: "Datos, cifras, timestamps",
+  },
+];
+
 ---
 
 <section class="marca">
   <!-- INTRO -->
   <div class="contenedor contenedor-intro">
     <p class="etiqueta-seccion">Colores</p>
+    <p class="texto-seccion">
+      Cinco colores, cada uno con un trabajo concreto: ninguno decorativo,
+      todos con una función que cumplir.
+    </p>
   </div>
 
   <!-- COLORES: bloques a pantalla completa, sin contenedor -->
@@ -77,36 +108,28 @@ const colores = [
   </div>
 
   <!-- TIPOGRAFÍA -->
-  <div class="contenedor">
+  <div class="contenedor contenedor-tipografia">
     <p class="etiqueta-seccion">Tipografía</p>
+    <p class="texto-seccion">
+      Una tipografía por tarea: identidad, lectura y datos no piden lo mismo.
+    </p>
+  </div>
 
-    <div class="specimen">
-      <p class="muestra muestra-display">ccordoba</p>
-      <p class="etiqueta-muestra">Títulos</p>
-      <p class="meta-tipo">Space Grotesk · 700 · 80px</p>
-    </div>
-
-    <div class="specimen">
-      <p class="muestra muestra-sora">Sistemas abiertos e interoperables</p>
-      <p class="etiqueta-muestra">Subtítulos</p>
-      <p class="meta-tipo">Sora · 500 · 34px</p>
-    </div>
-
-    <div class="specimen">
-      <p class="muestra muestra-inter">
-        Cada tipografía cumple un papel distinto en la identidad: una para el
-        logotipo, otra para documentos, otra para el cuerpo de texto y otra
-        para datos y cifras. Ninguna sustituye a las demás.
-      </p>
-      <p class="etiqueta-muestra">Cuerpo de texto</p>
-      <p class="meta-tipo">Inter · 400 · 17px</p>
-    </div>
-
-    <div class="specimen">
-      <p class="muestra muestra-mono">94.2% puntualidad · 15min</p>
-      <p class="etiqueta-muestra">Datos, cifras, timestamps</p>
-      <p class="meta-tipo">IBM Plex Mono · 400 · 26px</p>
-    </div>
+  <!-- TIPOGRAFÍAS: bloques a pantalla completa, sin contenedor -->
+  <div class="tipografias">
+    {
+      tipografias.map((tipo) => (
+        <div class="bloque-tipo">
+          <div class="muestra-wrap">
+            <p class={`muestra ${tipo.clase}`}>{tipo.muestra}</p>
+          </div>
+          <div class="info-tipo">
+            <p class="meta-tipo">{tipo.meta}</p>
+            <p class="uso-tipo">{tipo.uso}</p>
+          </div>
+        </div>
+      ))
+    }
   </div>
 
   <!-- LOGOTIPO -->
@@ -143,11 +166,11 @@ const colores = [
       {
         colores.map((color) => {
           // Logotipo cuadrado en las 5 muestras: la versión blanca (transparente)
-          // sobre fondos oscuros o saturados donde contrasta bien (Grafito, Señal);
-          // la versión morada (transparente) sobre fondos claros donde el
-          // blanco no se vería (Papel, Vía, Andén).
+          // sobre fondos oscuros o saturados donde contrasta bien (Grafito, Señal,
+          // Andén); la versión morada (transparente) sobre fondos claros donde el
+          // blanco no se vería (Papel, Vía).
           const src =
-            color.nombre === "Grafito" || color.nombre === "Señal"
+            color.nombre === "Grafito" || color.nombre === "Señal" || color.nombre === "Andén"
               ? logoCuadradoBlanco
               : logoCuadradoMorado;
           return (
@@ -199,7 +222,7 @@ const colores = [
   .contenedor {
     max-width: 1040px;
     margin: 0 auto;
-    padding: 96px 32px;
+    padding: 64px 32px;
   }
 
   .contenedor-intro {
@@ -212,6 +235,14 @@ const colores = [
     font-size: 16px;
     font-weight: 600;
     color: #23262b;
+  }
+
+  .texto-seccion {
+    margin: 0 0 32px;
+    font-family: "Identidad Inter", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #3c3f46;
   }
 
   /* ---------- Colores ---------- */
@@ -232,7 +263,7 @@ const colores = [
 
   .bloque-color {
     display: flex;
-    min-height: 340px;
+    min-height: 260px;
     flex-direction: column;
     justify-content: flex-end;
     padding: 28px;
@@ -264,29 +295,57 @@ const colores = [
   }
 
   /* ---------- Tipografía ---------- */
-  .specimen {
-    padding: 40px 0;
-    border-top: 1px solid #e7e4de;
-  }
-  .specimen:last-child {
+  .contenedor-tipografia {
     padding-bottom: 0;
   }
 
+  .tipografias {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  @media (max-width: 900px) {
+    .tipografias {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .tipografias {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .bloque-tipo {
+    display: flex;
+    min-height: 260px;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px;
+    background: #faf9f7;
+    border: 1px solid #e7e4de;
+  }
+
+  .muestra-wrap {
+    display: flex;
+    flex: 1;
+    align-items: center;
+  }
+
   .muestra {
-    margin: 0 0 14px;
+    margin: 0;
     color: #23262b;
+    overflow-wrap: break-word;
   }
   .muestra-display {
     font-family: "Identidad Space Grotesk", sans-serif;
     font-weight: 700;
-    font-size: clamp(48px, 9vw, 80px);
+    font-size: clamp(32px, 7vw, 72px);
     line-height: 1;
     letter-spacing: -0.02em;
   }
   .muestra-sora {
     font-family: "Identidad Sora", sans-serif;
     font-weight: 500;
-    font-size: clamp(24px, 4vw, 34px);
+    font-size: clamp(20px, 3vw, 34px);
     line-height: 1.25;
   }
   .muestra-inter {
@@ -299,30 +358,30 @@ const colores = [
   .muestra-mono {
     font-family: "Identidad Plex Mono", monospace;
     font-weight: 400;
-    font-size: 26px;
+    font-size: clamp(18px, 2.4vw, 26px);
   }
 
-  .etiqueta-muestra {
-    margin: 0 0 6px;
-    font-family: "Identidad Plex Mono", monospace;
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #8b8d93;
+  .info-tipo {
+    margin-top: 24px;
   }
 
   .meta-tipo {
-    margin: 0;
+    margin: 0 0 8px;
     font-family: "Identidad Plex Mono", monospace;
     font-size: 11px;
     color: #b3b5ba;
   }
 
-  /* ---------- Logotipo ---------- */
-  .seccion-logotipo {
-    border-top: 1px solid #e7e4de;
+  .uso-tipo {
+    margin: 0;
+    font-family: "Identidad Inter", sans-serif;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: #23262b;
+    opacity: 0.85;
   }
 
+  /* ---------- Logotipo ---------- */
   .logo-hero {
     display: flex;
     align-items: center;
