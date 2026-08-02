@@ -2,7 +2,9 @@ import { defineCollection, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 const proyectos = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/proyectos" }),
+  // .mdx además de .md: hace falta para proyectos que necesitan
+  // HTML/CSS/componentes embebidos en el cuerpo (p. ej. identidad-marca).
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/proyectos" }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),

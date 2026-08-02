@@ -1,0 +1,433 @@
+---
+// Página de presentación de la identidad de marca. A propósito NO usa
+// clases de Tailwind ligadas a tailwind.config.mjs (bg-senal, text-ink,
+// font-display...): todos los colores y fuentes van en valores literales
+// aquí mismo, para que esta página siga mostrando los valores de marca
+// "como fueron" aunque el theme de Tailwind cambie en el futuro.
+
+interface Props {
+  // Horizontal, tinta blanca (pensado para fondos oscuros): protagonista
+  // de la sección Logotipo.
+  logoPrincipal: string;
+  // Horizontal, tinta morada (pensado para fondos claros): versión
+  // secundaria, y la que se usa en la fila sobre los 5 colores.
+  logoMonocromo: string;
+  // Cuadrado, tinta blanca sobre transparente: para fondos oscuros o
+  // saturados donde el blanco contrasta bien.
+  logoCuadradoBlanco: string;
+  // Cuadrado, tinta morada sobre transparente: para fondos claros donde
+  // el blanco no contrastaría.
+  logoCuadradoMorado: string;
+}
+
+const { logoPrincipal, logoMonocromo, logoCuadradoBlanco, logoCuadradoMorado } = Astro.props;
+
+const colores = [
+  {
+    nombre: "Grafito",
+    hex: "#23262B",
+    uso: "Texto principal",
+    texto: "#FAF9F7",
+  },
+  {
+    nombre: "Papel",
+    hex: "#FAF9F7",
+    uso: "Fondo base",
+    texto: "#23262B",
+  },
+  {
+    nombre: "Señal",
+    hex: "#6B4E8E",
+    uso: "Color de marca, acentos",
+    texto: "#FAF9F7",
+  },
+  {
+    nombre: "Vía",
+    hex: "#E4DCEF",
+    uso: "Tinte pastel, fondos suaves",
+    texto: "#23262B",
+  },
+  {
+    nombre: "Andén",
+    hex: "#9FC9C4",
+    uso: "Secundario, gráficas y variedad de datos",
+    texto: "#23262B",
+  },
+];
+
+---
+
+<section class="marca">
+  <!-- INTRO -->
+  <div class="contenedor contenedor-intro">
+    <p class="etiqueta-seccion">Colores</p>
+  </div>
+
+  <!-- COLORES: bloques a pantalla completa, sin contenedor -->
+  <div class="colores">
+    {
+      colores.map((color) => (
+        <div class="bloque-color" style={`background:${color.hex}; color:${color.texto};`}>
+          <p class="nombre-color">{color.nombre}</p>
+          <p class="hex-color">{color.hex}</p>
+          <p class="uso-color">{color.uso}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <!-- TIPOGRAFÍA -->
+  <div class="contenedor">
+    <p class="etiqueta-seccion">Tipografía</p>
+
+    <div class="specimen">
+      <p class="muestra muestra-display">ccordoba</p>
+      <p class="etiqueta-muestra">Títulos</p>
+      <p class="meta-tipo">Space Grotesk · 700 · 80px</p>
+    </div>
+
+    <div class="specimen">
+      <p class="muestra muestra-sora">Sistemas abiertos e interoperables</p>
+      <p class="etiqueta-muestra">Subtítulos</p>
+      <p class="meta-tipo">Sora · 500 · 34px</p>
+    </div>
+
+    <div class="specimen">
+      <p class="muestra muestra-inter">
+        Cada tipografía cumple un papel distinto en la identidad: una para el
+        logotipo, otra para documentos, otra para el cuerpo de texto y otra
+        para datos y cifras. Ninguna sustituye a las demás.
+      </p>
+      <p class="etiqueta-muestra">Cuerpo de texto</p>
+      <p class="meta-tipo">Inter · 400 · 17px</p>
+    </div>
+
+    <div class="specimen">
+      <p class="muestra muestra-mono">94.2% puntualidad · 15min</p>
+      <p class="etiqueta-muestra">Datos, cifras, timestamps</p>
+      <p class="meta-tipo">IBM Plex Mono · 400 · 26px</p>
+    </div>
+  </div>
+
+  <!-- LOGOTIPO -->
+  <div class="contenedor seccion-logotipo">
+    <p class="etiqueta-seccion">Logotipo</p>
+
+    <div class="logo-hero">
+      <img src={logoPrincipal} alt="Logotipo ccordoba, versión horizontal" />
+    </div>
+
+    <div class="logo-secundarios">
+      <div class="logo-secundario">
+        <img src={logoMonocromo} alt="Logotipo ccordoba, versión monocolor" />
+        <p class="caption-logo">Logotipo horizontal — versión monocolor</p>
+        <p class="uso-logo">
+          Para fondos donde el color a página completa no encaje bien.
+        </p>
+      </div>
+      <div class="logo-secundario logo-secundario--anden">
+        <img src={logoCuadradoBlanco} alt="Logotipo ccordoba, versión cuadrada" />
+        <p class="caption-logo">Versión cuadrada — favicon y avatar</p>
+        <p class="uso-logo">Para favicon, avatar y redes sociales.</p>
+      </div>
+    </div>
+
+    <p class="texto-proceso">
+      El logotipo pasó por varias versiones antes de llegar a esta. Cada
+      resultado generado por IA se revisó a mano, y cuando la simetría o el
+      grosor de trazo lo exigían, se reconstruyó en vectorial por código para
+      garantizar precisión exacta donde la IA de imagen no la garantiza.
+    </p>
+
+    <div class="logo-sobre-colores">
+      {
+        colores.map((color) => {
+          // Logotipo cuadrado en las 5 muestras: la versión blanca (transparente)
+          // sobre fondos oscuros o saturados donde contrasta bien (Grafito, Señal);
+          // la versión morada (transparente) sobre fondos claros donde el
+          // blanco no se vería (Papel, Vía, Andén).
+          const src =
+            color.nombre === "Grafito" || color.nombre === "Señal"
+              ? logoCuadradoBlanco
+              : logoCuadradoMorado;
+          return (
+            <div class="logo-muestra" style={`background:${color.hex}`}>
+              <img src={src} alt={`Marca ccordoba sobre ${color.nombre}`} />
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  @font-face {
+    font-family: "Identidad Space Grotesk";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/space-grotesk-700.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Identidad Sora";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/sora-500.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Identidad Inter";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/inter-400.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Identidad Plex Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/ibm-plex-mono-400.woff2") format("woff2");
+  }
+
+  .marca {
+    background: #faf9f7;
+    color: #23262b;
+  }
+
+  .contenedor {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 96px 32px;
+  }
+
+  .contenedor-intro {
+    padding-bottom: 0;
+  }
+
+  .etiqueta-seccion {
+    margin: 0 0 6px;
+    font-family: "Identidad Space Grotesk", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #23262b;
+  }
+
+  /* ---------- Colores ---------- */
+  .colores {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  @media (max-width: 900px) {
+    .colores {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .colores {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .bloque-color {
+    display: flex;
+    min-height: 340px;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+    /* Papel (#FAF9F7) es casi idéntico al fondo de la página: sin un borde
+       propio, ese bloque se confundiría con el hueco vacío de alrededor. */
+    box-shadow: inset 0 0 0 1px rgba(35, 38, 43, 0.1);
+  }
+  .nombre-color {
+    margin: 0 0 6px;
+    font-family: "Identidad Space Grotesk", sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .hex-color {
+    margin: 0 0 14px;
+    font-family: "Identidad Plex Mono", monospace;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  .uso-color {
+    margin: 0;
+    min-height: 38px;
+    max-width: 22ch;
+    font-family: "Identidad Inter", sans-serif;
+    font-size: 13.5px;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
+
+  /* ---------- Tipografía ---------- */
+  .specimen {
+    padding: 40px 0;
+    border-top: 1px solid #e7e4de;
+  }
+  .specimen:last-child {
+    padding-bottom: 0;
+  }
+
+  .muestra {
+    margin: 0 0 14px;
+    color: #23262b;
+  }
+  .muestra-display {
+    font-family: "Identidad Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(48px, 9vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .muestra-sora {
+    font-family: "Identidad Sora", sans-serif;
+    font-weight: 500;
+    font-size: clamp(24px, 4vw, 34px);
+    line-height: 1.25;
+  }
+  .muestra-inter {
+    font-family: "Identidad Inter", sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.65;
+    color: #3c3f46;
+  }
+  .muestra-mono {
+    font-family: "Identidad Plex Mono", monospace;
+    font-weight: 400;
+    font-size: 26px;
+  }
+
+  .etiqueta-muestra {
+    margin: 0 0 6px;
+    font-family: "Identidad Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8b8d93;
+  }
+
+  .meta-tipo {
+    margin: 0;
+    font-family: "Identidad Plex Mono", monospace;
+    font-size: 11px;
+    color: #b3b5ba;
+  }
+
+  /* ---------- Logotipo ---------- */
+  .seccion-logotipo {
+    border-top: 1px solid #e7e4de;
+  }
+
+  .logo-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* logoPrincipal es tinta blanca sobre transparente: necesita un fondo
+       oscuro para leerse, un fondo blanco lo dejaría invisible. Señal es
+       el morado de marca, y el blanco lee perfectamente sobre él. */
+    background: #6b4e8e;
+    padding: 72px 24px;
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+  .logo-hero img {
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+  }
+
+  .logo-secundarios {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+  @media (max-width: 600px) {
+    .logo-secundarios {
+      flex-direction: column;
+    }
+  }
+
+  .logo-secundario {
+    flex: 1;
+    padding: 32px 24px;
+    background: #fff;
+    border: 1px solid #e7e4de;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .logo-secundario img {
+    display: block;
+    height: 64px;
+    width: auto;
+    margin: 0 auto 20px;
+  }
+
+  .caption-logo {
+    margin: 0 0 4px;
+    font-family: "Identidad Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #23262b;
+  }
+  .uso-logo {
+    margin: 0;
+    font-family: "Identidad Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #8b8d93;
+  }
+
+  /* Tarjeta derecha (logotipo cuadrado): fondo Andén, texto oscuro sin
+     contraste ahí, así que pasa a blanco. */
+  .logo-secundario--anden {
+    background: #9fc9c4;
+    border-color: transparent;
+  }
+  .logo-secundario--anden .caption-logo {
+    color: #fff;
+  }
+  .logo-secundario--anden .uso-logo {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .texto-proceso {
+    margin: 0 0 56px;
+    font-family: "Identidad Inter", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #3c3f46;
+  }
+
+  .logo-sobre-colores {
+    /* Full-bleed: se sale del .contenedor (max-width: 900px) para ocupar
+       el 100% del ancho de la ventana, igual que la fila de Colores. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 700px) {
+    .logo-sobre-colores {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .logo-muestra {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border-radius: 4px;
+  }
+  .logo-muestra img {
+    width: 42%;
+    height: auto;
+  }
+</style>

@@ -6,8 +6,13 @@ export async function getStaticPaths() {
   const proyectos = await getCollection("proyectos");
   return proyectos
     // "incendios-tiempo-real" ya tiene su propia página con el visor en vivo
-    // (/incendios-tiempo-real/); no le hace falta esta página genérica.
-    .filter((proyecto) => proyecto.id !== "incendios-tiempo-real")
+    // (/incendios-tiempo-real/); "identidad-marca" tiene su propia página
+    // editorial (proyectos/identidad-marca.astro), con una estructura muy
+    // distinta a la genérica (Objetivo/Datos/Arquitectura) de este layout.
+    // Ninguna de las dos necesita esta página genérica.
+    .filter(
+      (proyecto) => !["incendios-tiempo-real", "identidad-marca"].includes(proyecto.id),
+    )
     .map((proyecto) => ({
       params: { slug: proyecto.id },
       props: { proyecto },

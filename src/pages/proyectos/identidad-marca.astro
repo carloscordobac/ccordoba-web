@@ -1,0 +1,30 @@
+---
+import { getEntry, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const entry = await getEntry("proyectos", "identidad-marca");
+if (!entry) throw new Error("Falta el contenido de src/content/proyectos/identidad-marca/");
+const { Content } = await render(entry);
+---
+
+<BaseLayout title={`${entry.data.title} | ccordoba.es`} description={entry.data.description}>
+  <section class="border-t border-linea">
+    <div class="mx-auto max-w-[1040px] px-8 pt-14">
+      <a
+        href="/#laboratorio"
+        class="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] text-senal transition-opacity hover:opacity-70"
+      >
+        ← Volver al laboratorio
+      </a>
+
+      <h1 class="mb-3 font-display text-[28px] font-semibold sm:text-[34px]">
+        {entry.data.title}
+      </h1>
+      <p class="mb-14 text-base leading-relaxed text-[#4B4E56]">
+        {entry.data.description}
+      </p>
+    </div>
+  </section>
+
+  <Content />
+</BaseLayout>
