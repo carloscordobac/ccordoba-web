@@ -83,18 +83,18 @@ const defaultImage = findAsset(imagenesModules, /\/default\.(jpe?g|png)$/i);
 const ACUARELA_DIR = path.resolve("./public/proyectos/cartas-trenes/imagenes-acuarela");
 const ACUARELA_URL_BASE = "/proyectos/cartas-trenes/imagenes-acuarela";
 
+const EXTENSIONES_ACUARELA = ["webp", "jpg", "png"];
+
 function resolverAcuarela(slug: string, fallbackFoto: string): string {
-  if (fs.existsSync(path.join(ACUARELA_DIR, `${slug}.jpg`))) {
-    return `${ACUARELA_URL_BASE}/${slug}.jpg`;
+  for (const ext of EXTENSIONES_ACUARELA) {
+    if (fs.existsSync(path.join(ACUARELA_DIR, `${slug}.${ext}`))) {
+      return `${ACUARELA_URL_BASE}/${slug}.${ext}`;
+    }
   }
-  if (fs.existsSync(path.join(ACUARELA_DIR, `${slug}.png`))) {
-    return `${ACUARELA_URL_BASE}/${slug}.png`;
-  }
-  if (fs.existsSync(path.join(ACUARELA_DIR, "default.jpg"))) {
-    return `${ACUARELA_URL_BASE}/default.jpg`;
-  }
-  if (fs.existsSync(path.join(ACUARELA_DIR, "default.png"))) {
-    return `${ACUARELA_URL_BASE}/default.png`;
+  for (const ext of EXTENSIONES_ACUARELA) {
+    if (fs.existsSync(path.join(ACUARELA_DIR, `default.${ext}`))) {
+      return `${ACUARELA_URL_BASE}/default.${ext}`;
+    }
   }
   return fallbackFoto;
 }
@@ -182,11 +182,17 @@ const categorias = cartas.reduce<
 >
   <script is:inline>
     (function () {
-      try {
-        if (localStorage.getItem("modo-visualizacion-trenes") === "acuarela") {
-          document.body.classList.add("modo-acuarela");
-        }
-      } catch (e) {}
+      // Selector Foto/Acuarela oculto temporalmente (ver .modo-toggle más
+      // abajo): se fuerza acuarela siempre, ignorando lo guardado en
+      // localStorage. Para reactivar el selector, restaura el bloque de
+      // abajo (comentado) y quita el classList.add fijo.
+      //
+      // try {
+      //   if (localStorage.getItem("modo-visualizacion-trenes") === "acuarela") {
+      //     document.body.classList.add("modo-acuarela");
+      //   }
+      // } catch (e) {}
+      document.body.classList.add("modo-acuarela");
     })();
   </script>
 
@@ -294,7 +300,10 @@ const categorias = cartas.reduce<
 
 <style>
   .modo-toggle {
-    display: inline-flex;
+    /* Selector Foto/Acuarela oculto temporalmente: solo visual, la lógica
+       de src/pages/cartas-trenes.astro (setupModoVisualizacion) sigue
+       intacta. Para reactivarlo, quita este display:none. */
+    display: none;
     flex-shrink: 0;
     gap: 4px;
     padding: 4px;
