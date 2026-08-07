@@ -242,6 +242,22 @@ const categorias = cartas.reduce<
   </section>
 
   <div id="carta-overlay" class="carta-overlay"></div>
+  <button
+    type="button"
+    id="carta-nav-prev"
+    class="carta-nav carta-nav-prev"
+    aria-label="Carta anterior"
+  >
+    ‹
+  </button>
+  <button
+    type="button"
+    id="carta-nav-next"
+    class="carta-nav carta-nav-next"
+    aria-label="Carta siguiente"
+  >
+    ›
+  </button>
 
   {
     cartas.map((carta) => (
@@ -371,8 +387,67 @@ const categorias = cartas.reduce<
     pointer-events: auto;
   }
 
+  .carta-nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 12px;
+    right: auto;
+    z-index: 1010;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(12, 12, 16, 0.55);
+    color: #fff;
+    font-family: "Sora", sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      background-color 150ms ease;
+  }
+  .carta-nav:hover {
+    background: rgba(12, 12, 16, 0.8);
+  }
+  .carta-nav-next {
+    left: auto;
+    right: 12px;
+  }
+  .carta-nav.is-visible {
+    visibility: visible;
+    pointer-events: auto;
+    opacity: 1;
+  }
+  .carta-nav.is-disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (min-width: 640px) {
+    .carta-nav {
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+    }
+    .carta-nav-prev {
+      left: 24px;
+    }
+    .carta-nav-next {
+      right: 24px;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .carta-overlay {
+    .carta-overlay,
+    .carta-nav {
       transition: none;
     }
   }
@@ -381,15 +456,44 @@ const categorias = cartas.reduce<
 <script>
   function setupCartas() {
     const overlayEl = document.getElementById("carta-overlay");
+    const navPrevEl = document.getElementById("carta-nav-prev");
+    const navNextEl = document.getElementById("carta-nav-next");
     const thumbnails = document.querySelectorAll<HTMLElement>(".carta-mini");
-    if (!overlayEl) return;
+    if (!overlayEl || !(navPrevEl instanceof HTMLButtonElement) || !(navNextEl instanceof HTMLButtonElement)) {
+      return;
+    }
     const overlay = overlayEl;
+    const navPrev = navPrevEl;
+    const navNext = navNextEl;
+
+    // Orden "de rejilla": se lee directamente del DOM ya renderizado (agrupado
+    // por categoría) en vez de recalcularlo, para que anterior/siguiente
+    // coincida exactamente con el orden visual, no con el orden crudo de
+    // trenes.json.
+    const ordenSlugs = Array.from(thumbnails)
+      .map((el) => el.dataset.slug)
+      .filter((slug): slug is string => Boolean(slug));
 
     let activeExpanded: HTMLElement | null = null;
     let activeThumb: HTMLElement | null = null;
+    let indiceActual = -1;
+    let enTransicion = false;
 
     function findExpanded(slug: string): HTMLElement | null {
       return document.querySelector<HTMLElement>(`.carta-grande[data-slug="${slug}"]`);
+    }
+
+    function actualizarBotonesNav() {
+      const visible = activeExpanded !== null;
+      navPrev.classList.toggle("is-visible", visible);
+      navNext.classList.toggle("is-visible", visible);
+      if (!visible) return;
+      const esPrimero = indiceActual <= 0;
+      const esUltimo = indiceActual >= ordenSlugs.length - 1;
+      navPrev.classList.toggle("is-disabled", esPrimero);
+      navPrev.disabled = esPrimero;
+      navNext.classList.toggle("is-disabled", esUltimo);
+      navNext.disabled = esUltimo;
     }
 
     function openCard(thumb: HTMLElement) {
@@ -429,6 +533,8 @@ const categorias = cartas.reduce<
 
       activeExpanded = expanded;
       activeThumb = thumb;
+      indiceActual = ordenSlugs.indexOf(slug);
+      actualizarBotonesNav();
     }
 
     function closeExpanded() {
@@ -459,6 +565,74 @@ const categorias = cartas.reduce<
 
       activeExpanded = null;
       activeThumb = null;
+      indiceActual = -1;
+      actualizarBotonesNav();
+    }
+
+    // Navega a la carta anterior/siguiente (según el orden de la rejilla)
+    // sin cerrar el modal: desactiva la carta ampliada actual y activa la de
+    // al lado con un fundido + deslizamiento lateral corto, en vez de
+    // reutilizar la animación de apertura (que parte de la posición de una
+    // miniatura concreta, y no tendría sentido con el modal ya centrado).
+    function navegar(direccion: 1 | -1) {
+      if (enTransicion || !activeExpanded || indiceActual === -1) return;
+      const nuevoIndice = indiceActual + direccion;
+      if (nuevoIndice < 0 || nuevoIndice >= ordenSlugs.length) return;
+
+      const nuevoSlug = ordenSlugs[nuevoIndice];
+      const nuevaTarjeta = findExpanded(nuevoSlug);
+      const nuevaMiniatura = document.querySelector<HTMLElement>(
+        `.carta-mini[data-slug="${nuevoSlug}"]`,
+      );
+      if (!nuevaTarjeta || !nuevaMiniatura) return;
+
+      enTransicion = true;
+      const tarjetaAnterior = activeExpanded;
+      const desplazamiento = direccion === 1 ? -32 : 32;
+
+      tarjetaAnterior.style.transition = "transform 220ms ease, opacity 220ms ease";
+      tarjetaAnterior.style.transform = `translate(-50%, -50%) translateX(${desplazamiento}px)`;
+      tarjetaAnterior.style.opacity = "0";
+
+      const onSalidaFin = () => {
+        tarjetaAnterior.removeEventListener("transitionend", onSalidaFin);
+        tarjetaAnterior.classList.remove("is-active");
+        tarjetaAnterior.style.transition = "";
+        tarjetaAnterior.style.transform = "";
+        tarjetaAnterior.style.opacity = "";
+      };
+      tarjetaAnterior.addEventListener("transitionend", onSalidaFin, { once: true });
+
+      nuevaTarjeta.style.zIndex = "1001";
+      nuevaTarjeta.style.transition = "none";
+      nuevaTarjeta.style.transform = `translate(-50%, -50%) translateX(${-desplazamiento}px)`;
+      nuevaTarjeta.style.opacity = "0";
+      nuevaTarjeta.classList.add("is-active");
+
+      // Forzar reflow para que el navegador registre el estado inicial
+      // antes de animar al estado final.
+      void nuevaTarjeta.offsetWidth;
+
+      requestAnimationFrame(() => {
+        nuevaTarjeta.style.transition = "transform 220ms ease, opacity 220ms ease";
+        nuevaTarjeta.style.transform = "translate(-50%, -50%)";
+        nuevaTarjeta.style.opacity = "1";
+      });
+
+      const onEntradaFin = () => {
+        nuevaTarjeta.removeEventListener("transitionend", onEntradaFin);
+        nuevaTarjeta.style.transition = "";
+        nuevaTarjeta.style.transform = "";
+        nuevaTarjeta.style.opacity = "";
+        nuevaTarjeta.style.zIndex = "";
+        enTransicion = false;
+      };
+      nuevaTarjeta.addEventListener("transitionend", onEntradaFin, { once: true });
+
+      activeExpanded = nuevaTarjeta;
+      activeThumb = nuevaMiniatura;
+      indiceActual = nuevoIndice;
+      actualizarBotonesNav();
     }
 
     thumbnails.forEach((thumb) => {
@@ -473,11 +647,43 @@ const categorias = cartas.reduce<
 
     document.querySelectorAll<HTMLElement>(".carta-grande").forEach((expanded) => {
       expanded.addEventListener("click", (e) => e.stopPropagation());
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+      expanded.addEventListener(
+        "touchstart",
+        (e) => {
+          const touch = e.touches[0];
+          touchStartX = touch.clientX;
+          touchStartY = touch.clientY;
+        },
+        { passive: true },
+      );
+      expanded.addEventListener(
+        "touchend",
+        (e) => {
+          const touch = e.changedTouches[0];
+          const dx = touch.clientX - touchStartX;
+          const dy = touch.clientY - touchStartY;
+          const UMBRAL_SWIPE = 50;
+          if (Math.abs(dx) > UMBRAL_SWIPE && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            navegar(dx < 0 ? 1 : -1);
+          }
+        },
+        { passive: true },
+      );
     });
 
     overlay.addEventListener("click", closeExpanded);
+    navPrev.addEventListener("click", () => navegar(-1));
+    navNext.addEventListener("click", () => navegar(1));
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeExpanded();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (!activeExpanded) return;
+      if (e.key === "ArrowLeft") navegar(-1);
+      if (e.key === "ArrowRight") navegar(1);
     });
   }
 
