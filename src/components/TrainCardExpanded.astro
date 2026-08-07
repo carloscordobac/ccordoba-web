@@ -292,11 +292,39 @@ const {
     min-width: 0;
     font-weight: 700;
     font-size: 18px;
-    line-height: 1.1;
+    line-height: 1.15;
     color: #fff;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /*
+    A anchos de móvil, la columna de cada atributo (mitad de la carta menos
+    el padding lateral) se queda demasiado estrecha para valores largos
+    ("250 / 220 / 180 km/h", "Variable (locomotora convencional)*"): en vez
+    de forzar una sola línea con ellipsis, se reduce la tipografía y se deja
+    que el valor pueda partirse en dos o más líneas dentro de su columna.
+  */
+  @media (max-width: 560px) {
+    .atributos {
+      column-gap: 16px;
+    }
+    .atributo {
+      align-items: flex-start;
+      gap: 0.4em;
+    }
+    .atributos dt {
+      font-size: 10px;
+    }
+    .atributos dd {
+      font-size: 13.5px;
+      line-height: 1.2;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: break-word;
+    }
   }
 
   .hito {
