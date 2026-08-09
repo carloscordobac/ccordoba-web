@@ -9,6 +9,7 @@ interface Props {
   acuarelaSrc: string;
   marco: string;
   colorCategoria: string;
+  nuevo?: boolean;
 }
 
 const {
@@ -21,6 +22,7 @@ const {
   acuarelaSrc,
   marco,
   colorCategoria,
+  nuevo,
 } = Astro.props;
 ---
 
@@ -45,7 +47,11 @@ const {
     <p class="categoria">{categoria}</p>
   </div>
 
-  <div class="capa marco" set:html={marco} />
+  {nuevo ? (
+    <img class="capa marco" src="/proyectos/cartas-trenes/marcos/marco-nuevo.png" alt="" />
+  ) : (
+    <div class="capa marco" set:html={marco} />
+  )}
   <p class="numero">{numeroTexto}</p>
 
   <div class="pie">

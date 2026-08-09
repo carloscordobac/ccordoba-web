@@ -16,6 +16,7 @@ interface Props {
   ecologicoTexto: string;
   historicoTexto: string;
   hito: string;
+  nuevo?: boolean;
 }
 
 const {
@@ -35,6 +36,7 @@ const {
   ecologicoTexto,
   historicoTexto,
   hito,
+  nuevo,
 } = Astro.props;
 ---
 
@@ -51,7 +53,11 @@ const {
     </div>
   </div>
 
-  <div class="capa marco" set:html={marco} />
+  {nuevo ? (
+    <img class="capa marco" src="/proyectos/cartas-trenes/marcos/marco-nuevo.png" alt="" />
+  ) : (
+    <div class="capa marco" set:html={marco} />
+  )}
   <p class="numero">{numeroTexto}</p>
 
   <div class="pie">

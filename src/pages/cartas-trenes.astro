@@ -22,6 +22,7 @@ interface Tren {
   ecologico: number;
   historico: number;
   hito: string;
+  nuevo?: boolean;
 }
 
 const trenes = trenesData as Tren[];
@@ -38,7 +39,7 @@ const marcosModules = import.meta.glob<string>(
   "../content/proyectos/cartas-trenes/marcos/*.svg",
   { eager: true, query: "?raw", import: "default" },
 );
-const marcoUniversal = Object.values(marcosModules)[0];
+const marcoUniversal = findAsset(marcosModules, /marco-solo\.svg$/);
 
 // Mismo color por categoría que llevaba incrustado cada marco SVG antes de
 // unificarlos en uno solo: se extrajo de la "ola" de cada uno para no
@@ -232,6 +233,7 @@ const categorias = cartas.reduce<
                     acuarelaSrc={carta.acuarelaSrc}
                     marco={carta.marcoMini}
                     colorCategoria={carta.colorCategoria}
+                    nuevo={carta.nuevo}
                   />
                 </li>
               ))}
@@ -280,6 +282,7 @@ const categorias = cartas.reduce<
         ecologicoTexto={carta.ecologicoTexto}
         historicoTexto={carta.historicoTexto}
         hito={carta.hito}
+        nuevo={carta.nuevo}
       />
     ))
   }

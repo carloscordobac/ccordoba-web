@@ -990,6 +990,7 @@
   },
   {
     "slug": "cercanias-serie-452",
+    "nuevo": true,
     "numero": 44,
     "categoria": "Cercanías",
     "categoria_slug": "cercanias",
@@ -1013,6 +1014,7 @@
   },
   {
     "slug": "cercanias-serie-453-t100",
+    "nuevo": true,
     "numero": 45,
     "categoria": "Cercanías",
     "categoria_slug": "cercanias",
@@ -1036,6 +1038,7 @@
   },
   {
     "slug": "cercanias-serie-453-t200",
+    "nuevo": true,
     "numero": 46,
     "categoria": "Cercanías",
     "categoria_slug": "cercanias",
@@ -1059,6 +1062,7 @@
   },
   {
     "slug": "media-distancia-serie-480",
+    "nuevo": true,
     "numero": 47,
     "categoria": "Media Distancia",
     "categoria_slug": "media-distancia",
