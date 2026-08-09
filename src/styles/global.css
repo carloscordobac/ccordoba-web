@@ -43,6 +43,17 @@
 
 html {
   scroll-behavior: smooth;
+  /* Cinturón de seguridad contra scroll extra en móvil: si algún bloque
+     full-bleed (width:100vw + márgenes negativos, como en identidad-marca)
+     se sale por un margen de subpíxel en algún dispositivo, que se recorte
+     en vez de generar una zona de scroll horizontal/vertical extra. Solo
+     en <html> (no en <body>): poner overflow-x en body haría que el
+     navegador calcule su overflow-y como "auto" (el body ya no puede tener
+     un eje visible y otro no), convirtiéndolo en su propio contenedor de
+     scroll y rompiendo el "sticky" del header. No afecta a elementos
+     position:fixed (siguen posicionados respecto al viewport).
+  */
+  overflow-x: hidden;
 }
 
 body {
