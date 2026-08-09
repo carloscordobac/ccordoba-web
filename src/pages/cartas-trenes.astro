@@ -200,19 +200,23 @@ const categorias = cartas.reduce<
   <div class="cartas-fondo">
     <section class="border-t border-linea px-8 py-14">
       <div class="mx-auto max-w-[1040px]">
-      <div class="mb-14 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p class="mb-1.5 font-mono text-[13px] uppercase tracking-[0.08em] text-senal">
-            Vista previa privada
-          </p>
-          <h1 class="font-display text-[28px] font-semibold">Cartas de trenes</h1>
-        </div>
+      <div class="mb-3 flex flex-wrap items-end justify-between gap-6">
+        <h1 class="font-display text-[28px] font-semibold">Cartas de trenes</h1>
 
         <div class="modo-toggle" role="group" aria-label="Modo de visualización">
           <button type="button" class="modo-btn" data-modo="foto">Foto</button>
           <button type="button" class="modo-btn" data-modo="acuarela">Acuarela</button>
         </div>
       </div>
+
+      <p class="mb-14 text-base leading-relaxed text-[#4B4E56]">
+        Un mazo de cartas inspirado en los juegos de "quién gana" de toda la vida, pero con
+        datos ferroviarios reales: velocidad, potencia, masa y capacidad de 47 trenes que
+        circulan, o están a punto de hacerlo, por España, extraídos directamente de las
+        fichas técnicas oficiales de Renfe. He construido este proyecto como excusa para
+        explorar hasta dónde llega hoy la IA generativa como herramienta de diseño,
+        prácticamente en cada capa del proceso: datos, maquetación e ilustración.
+      </p>
 
       {
         categorias.map((grupo) => (
