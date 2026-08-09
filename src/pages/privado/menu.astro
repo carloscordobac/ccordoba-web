@@ -1,0 +1,287 @@
+---
+// Página privada, no enlazada desde ningún sitio del site (nav, footer,
+// home...) y excluida del sitemap (ver PAGINAS_PRIVADAS/PREFIJOS_PRIVADOS en
+// astro.config.mjs). Solo accesible escribiendo /privado/menu directamente.
+// Vive bajo /pages/privado/ para que Cloudflare Access pueda proteger toda
+// la ruta /privado/* de una vez, incluyendo futuras páginas privadas.
+//
+// Los datos viven en src/data/menu.yaml (42 días en secuencia plana, sin
+// anidar por semana) en vez de en una colección de contenido: se leen y
+// parsean directamente aquí con js-yaml.
+import fs from "node:fs";
+import path from "node:path";
+import { load as loadYaml } from "js-yaml";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+interface ItemComida {
+  texto: string | null;
+  receta?: string | null;
+}
+
+interface DiaMenu {
+  dia: number;
+  comida: ItemComida;
+  comida_alt?: ItemComida;
+  cena: ItemComida;
+  cena_alt?: ItemComida;
+}
+
+interface MenuYaml {
+  rutina_fija: {
+    desayuno: string;
+    media_manana: string;
+    media_tarde: string;
+    nota_cena: string;
+  };
+  dias: DiaMenu[];
+}
+
+const rutaYaml = path.resolve("./src/data/menu.yaml");
+const datos = loadYaml(fs.readFileSync(rutaYaml, "utf-8")) as MenuYaml;
+
+if (datos.dias.length !== 42) {
+  throw new Error(
+    `src/data/menu.yaml debe tener exactamente 42 días (tiene ${datos.dias.length}).`,
+  );
+}
+
+// Secuencia continua de 42 días, indexada 0..41. dia:1 del YAML -> índice
+// 0 -> HOY (ver lógica de anclaje en el script de cliente). Solo viaja al
+// cliente lo necesario para pintar las tarjetas.
+const secuencia = datos.dias
+  .slice()
+  .sort((a, b) => a.dia - b.dia)
+  .map((d) => ({
+    comida: d.comida,
+    comidaAlt: d.comida_alt ?? null,
+    cena: d.cena,
+    cenaAlt: d.cena_alt ?? null,
+  }));
+
+const rutina = {
+  desayuno: datos.rutina_fija.desayuno.trim(),
+  mediaManana: datos.rutina_fija.media_manana.trim(),
+  mediaTarde: datos.rutina_fija.media_tarde.trim(),
+  notaCena: datos.rutina_fija.nota_cena.trim(),
+};
+---
+
+<BaseLayout
+  title="Menú semanal | ccordoba.es"
+  description="Plan de comidas semanal, uso personal."
+  noindex
+>
+  <section class="mx-auto max-w-[720px] px-6 py-10 md:py-14">
+    <h1 class="font-display text-2xl font-semibold text-ink">Menú semanal</h1>
+
+    <details class="mt-6 rounded-lg border border-linea bg-white p-4">
+      <summary class="cursor-pointer font-medium text-ink">Rutina diaria fija</summary>
+      <div class="mt-3 space-y-3 text-sm leading-relaxed text-ink">
+        <p><strong>Desayuno:</strong> {rutina.desayuno}</p>
+        <p><strong>Media mañana:</strong> {rutina.mediaManana}</p>
+        <p><strong>Media tarde:</strong> {rutina.mediaTarde}</p>
+        <p class="italic text-ink/70">{rutina.notaCena}</p>
+      </div>
+    </details>
+
+    <noscript>
+      <p class="mt-8 text-sm text-ink/70">
+        El calendario de comidas necesita JavaScript para calcular las fechas. Actívalo para
+        verlo.
+      </p>
+    </noscript>
+
+    <div class="mt-8 text-center">
+      <button
+        type="button"
+        id="btn-anteriores"
+        class="rounded-full border border-linea bg-white px-4 py-2 text-sm font-medium text-senal hover:bg-via"
+      >
+        Ver días anteriores
+      </button>
+    </div>
+
+    <div id="lista-dias" class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2"></div>
+
+    <div class="mt-6 text-center">
+      <button
+        type="button"
+        id="btn-siguientes"
+        class="rounded-full border border-linea bg-white px-4 py-2 text-sm font-medium text-senal hover:bg-via"
+      >
+        Ver más días
+      </button>
+    </div>
+
+    <script
+      is:inline
+      type="application/json"
+      id="menu-secuencia"
+      set:html={JSON.stringify(secuencia)}
+    />
+  </section>
+</BaseLayout>
+
+<script>
+  interface ItemComida {
+    texto: string | null;
+    receta?: string | null;
+  }
+  interface DiaCliente {
+    comida: ItemComida;
+    comidaAlt: ItemComida | null;
+    cena: ItemComida;
+    cenaAlt: ItemComida | null;
+  }
+
+  const MESES = [
+    "ene",
+    "feb",
+    "mar",
+    "abr",
+    "may",
+    "jun",
+    "jul",
+    "ago",
+    "sep",
+    "oct",
+    "nov",
+    "dic",
+  ];
+  const DIAS_SEMANA = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const LARGO_CICLO = 42;
+
+  function setupCalendarioMenu() {
+    const scriptDatos = document.getElementById("menu-secuencia");
+    const contenedorEl = document.getElementById("lista-dias");
+    const btnAnteriores = document.getElementById("btn-anteriores");
+    const btnSiguientes = document.getElementById("btn-siguientes");
+    if (!scriptDatos || !contenedorEl || !btnAnteriores || !btnSiguientes) return;
+    const contenedor = contenedorEl;
+
+    const secuencia = JSON.parse(scriptDatos.textContent || "[]") as DiaCliente[];
+    if (secuencia.length !== LARGO_CICLO) return;
+
+    // Hoy = día 1 del YAML = índice 0 del ciclo = offset 0. Se calcula en
+    // el navegador (no en build) para que el ancla sea siempre la fecha
+    // real de quien mira la página, no la fecha en la que se desplegó el
+    // sitio.
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    function indiceCiclo(offset: number): number {
+      return ((offset % LARGO_CICLO) + LARGO_CICLO) % LARGO_CICLO;
+    }
+
+    function fechaParaOffset(offset: number): Date {
+      const fecha = new Date(hoy);
+      fecha.setDate(fecha.getDate() + offset);
+      return fecha;
+    }
+
+    function etiquetaFecha(offset: number, fecha: Date): string {
+      const fechaCorta = `${fecha.getDate()} ${MESES[fecha.getMonth()]}`;
+      if (offset === 0) return `Hoy, ${fechaCorta}`;
+      if (offset === 1) return `Mañana, ${fechaCorta}`;
+      return `${DIAS_SEMANA[fecha.getDay()]}, ${fechaCorta}`;
+    }
+
+    function crearParrafoItem(item: ItemComida, opcion?: "A" | "B"): HTMLParagraphElement {
+      const p = document.createElement("p");
+      p.className = "mt-1 text-sm leading-relaxed text-ink";
+      if (opcion) {
+        const span = document.createElement("span");
+        span.className = "font-semibold";
+        span.textContent = `Opción ${opcion}: `;
+        p.appendChild(span);
+      }
+      p.appendChild(document.createTextNode(item.texto ?? "Sin definir"));
+      if (item.receta) {
+        p.appendChild(document.createTextNode(" "));
+        const a = document.createElement("a");
+        a.href = item.receta;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.className = "font-medium text-senal underline underline-offset-2";
+        a.textContent = "Ver receta →";
+        p.appendChild(a);
+      }
+      return p;
+    }
+
+    function crearBloque(
+      titulo: string,
+      item: ItemComida,
+      itemAlt: ItemComida | null,
+    ): HTMLDivElement {
+      const div = document.createElement("div");
+      div.className = "mt-3";
+      const etiqueta = document.createElement("p");
+      etiqueta.className = "text-xs font-semibold uppercase tracking-wide text-ink/60";
+      etiqueta.textContent = titulo;
+      div.appendChild(etiqueta);
+      if (itemAlt) {
+        div.appendChild(crearParrafoItem(item, "A"));
+        div.appendChild(crearParrafoItem(itemAlt, "B"));
+      } else {
+        div.appendChild(crearParrafoItem(item));
+      }
+      return div;
+    }
+
+    function crearTarjeta(offset: number): HTMLElement {
+      const esHoy = offset === 0;
+      const fecha = fechaParaOffset(offset);
+      const dia = secuencia[indiceCiclo(offset)];
+
+      const article = document.createElement("article");
+      article.className = esHoy
+        ? "rounded-xl border-2 border-senal bg-via p-4"
+        : "rounded-xl border border-linea bg-white p-4";
+      article.dataset.offset = String(offset);
+
+      const h2 = document.createElement("h2");
+      h2.className = "font-display text-lg font-semibold text-senal";
+      h2.textContent = etiquetaFecha(offset, fecha);
+      article.appendChild(h2);
+
+      article.appendChild(crearBloque("Comida", dia.comida, dia.comidaAlt));
+      article.appendChild(crearBloque("Cena", dia.cena, dia.cenaAlt));
+
+      return article;
+    }
+
+    let offsetMin = 0;
+    let offsetMax = -1;
+
+    function mostrarSiguientes() {
+      const desde = offsetMax + 1;
+      const hasta = offsetMax + 7;
+      for (let offset = desde; offset <= hasta; offset++) {
+        contenedor.appendChild(crearTarjeta(offset));
+      }
+      offsetMax = hasta;
+    }
+
+    function mostrarAnteriores() {
+      const desde = offsetMin - 7;
+      const hasta = offsetMin - 1;
+      // Se insertan en orden cronológico (el más antiguo primero), todas
+      // antes de la que hasta ahora era la tarjeta más antigua visible.
+      const primeraActual = contenedor.firstElementChild;
+      for (let offset = desde; offset <= hasta; offset++) {
+        contenedor.insertBefore(crearTarjeta(offset), primeraActual);
+      }
+      offsetMin = desde;
+    }
+
+    btnSiguientes.addEventListener("click", mostrarSiguientes);
+    btnAnteriores.addEventListener("click", mostrarAnteriores);
+
+    // Vista inicial: hoy + los 6 días siguientes (un único lote de 7).
+    mostrarSiguientes();
+  }
+
+  setupCalendarioMenu();
+  document.addEventListener("astro:page-load", setupCalendarioMenu);
+</script>

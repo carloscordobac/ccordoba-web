@@ -13,6 +13,13 @@ const PAGINAS_PRIVADAS = [
   'https://ccordoba.es/cartas-trenes/',
 ];
 
+// Todo lo que viva bajo /privado/* (protegido aparte con Cloudflare Access)
+// se excluye del sitemap de una vez, sin tener que listar cada página nueva
+// que se añada ahí.
+const PREFIJOS_PRIVADOS = [
+  'https://ccordoba.es/privado/',
+];
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ccordoba.es',
@@ -23,7 +30,9 @@ export default defineConfig({
 
   integrations: [
     sitemap({
-      filter: (page) => !PAGINAS_PRIVADAS.includes(page),
+      filter: (page) =>
+        !PAGINAS_PRIVADAS.includes(page) &&
+        !PREFIJOS_PRIVADOS.some((prefijo) => page.startsWith(prefijo)),
     }),
     mdx(),
   ]

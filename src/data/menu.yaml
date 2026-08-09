@@ -1,0 +1,164 @@
+rutina_fija:
+  desayuno: >
+    Café con leche. Pan integral (100% integral, mejor de buena
+    panadería: centeno, trigo sarraceno o espelta). Aceite de oliva
+    virgen extra (prensado en frío si es posible). Variantes: con
+    tomate y AOVE / con queso fresco, orégano y AOVE / con pechuga de
+    pavo, jamón cocido (buena calidad, sin aditivos, conservantes,
+    gluten ni lactosa) o jamón ibérico.
+  media_manana: >
+    Yogur bajo en azúcar (5-7%). Nueces, almendras o avellanas
+    tostadas sin sal. Pieza de fruta (manzana, pera, o frutos del
+    bosque: arándanos, frambuesas, fresas o moras).
+  media_tarde: >
+    Dos rollitos de jamón o pechuga de pavo con queso tierno, o dos
+    lonchas de salmón ahumado, o dos rollitos de salmón ahumado con
+    aguacate. Frutos secos (un puño). NO FRUTA.
+  nota_cena: >
+    En las cremas: reduce el aceite a unos 20-25g, sin mantequilla —
+    puedes añadir un poco de nata o un par de quesitos. NO FRUTA en
+    la cena.
+
+dias:
+  - dia: 1
+    comida: { texto: "Tortilla de verduras, ensalada de canónigos con nueces y queso fresco (aliño de sal, aceite y vinagre de sidra)", receta: null }
+    cena: { texto: "Brochetas de pollo con espárragos trigueros a la plancha", receta: null }
+  - dia: 2
+    comida: { texto: "Muslos de pollo en salsa con zanahorias y champiñones, con quinoa o patata", receta: null }
+    cena: { texto: "Crema de lentejas", receta: "https://cookidoo.es/recipes/recipe/es-ES/r268174" }
+  - dia: 3
+    comida: { texto: "Atún a la plancha, ensalada de canónigos, tomates cherry, cebolla y rabanitos", receta: null }
+    cena: { texto: "Tortilla francesa de jamón cocido y queso", receta: null }
+  - dia: 4
+    comida: { texto: "Hamburguesas de pavo con una lonchita de queso, ensalada de garbanzos (75% ensalada, 25% garbanzos)", receta: null }
+    cena: { texto: "Libre", receta: null }
+  - dia: 5
+    comida: { texto: "Merluza en salsa verde, salteado de brócoli y calabacín", receta: null }
+    cena: { texto: "Crema de calabaza con curry", receta: "https://cookidoo.es/recipes/recipe/es-ES/r312647" }
+  - dia: 6
+    comida: { texto: "Emperador a la plancha con calabacines asados y patata cocida", receta: null }
+    cena: { texto: "Revuelto de champiñones y gambas", receta: null }
+  - dia: 7
+    comida: { texto: "Tortilla de bacalao, espárragos trigueros a la plancha", receta: null }
+    cena: { texto: "Crema de puerro con parmesano", receta: "https://cookidoo.es/recipes/recipe/es-ES/r665286" }
+
+  - dia: 8
+    comida: { texto: "Calabacín a la plancha, ensalada de canónigos con queso fresco y nueces, aguacate, caballa y salmón", receta: null }
+    cena: { texto: "Crema de puerro con parmesano", receta: "https://cookidoo.es/recipes/recipe/es-ES/r665286" }
+  - dia: 9
+    comida: { texto: "Salmón con ensalada de tomates cherry y arroz basmati", receta: null }
+    cena: { texto: "Tortilla francesa de jamón cocido y queso", receta: null }
+  - dia: 10
+    comida: { texto: "Solomillo de cerdo a la plancha con rúcula o canónigos y aguacate", receta: null }
+    cena: { texto: "Crema de lentejas", receta: "https://cookidoo.es/recipes/recipe/es-ES/r268174" }
+  - dia: 11
+    comida: { texto: "Hamburguesas de pavo con lonchita de queso, ensalada de garbanzos (75/25)", receta: null }
+    cena: { texto: "Libre", receta: null }
+  - dia: 12
+    comida: { texto: "Emperador a la plancha con calabacines asados", receta: null }
+    cena: { texto: "Hamburguesa de ternera con calabacín pochado", receta: null }
+  - dia: 13
+    comida: { texto: "Ensalada templada de bacalao, huevos cocidos, espárragos trigueros salteados y naranja", receta: null }
+    cena: { texto: "Revuelto de champiñones y gambas", receta: null }
+  - dia: 14
+    comida: { texto: "Pollo a la mostaza al horno (muslos y contramuslos) con salteado de setas variadas", receta: null }
+    cena: { texto: "Crema (sin especificar)", receta: null }
+
+  - dia: 15
+    comida: { texto: "Calabacín con verduras", receta: null }
+    cena: { texto: "Crema de puerro con parmesano", receta: "https://cookidoo.es/recipes/recipe/es-ES/r665286" }
+  - dia: 16
+    comida: { texto: "Albóndigas de carne con salteado de espinacas y garbanzos", receta: null }
+    cena: { texto: "Tortilla francesa de jamón cocido y queso", receta: null }
+  - dia: 17
+    comida: { texto: "Dorada a la plancha con brócoli y espárragos trigueros", receta: null }
+    cena: { texto: "Crema de lentejas", receta: "https://cookidoo.es/recipes/recipe/es-ES/r268174" }
+  - dia: 18
+    comida: { texto: "Pollo al curry, salteado de setas y arroz basmati o integral", receta: null }
+    cena: { texto: "Libre", receta: null }
+  - dia: 19
+    comida: { texto: "Merluza a la plancha con escalivada (pimientos, berenjenas y tomates asados, pelados, en tiras, aliñados; tibio o frío)", receta: null }
+    cena: { texto: "Hamburguesa de ternera con calabacín pochado", receta: null }
+  - dia: 20
+    comida: { texto: "Pechuga de pollo a la plancha con salteado de champiñones, ajo, taquitos de jamón serrano y patata cocida", receta: null }
+    cena: { texto: "Revuelto de champiñones y gambas", receta: null }
+  - dia: 21
+    comida: { texto: null }
+    cena: { texto: "Crema (sin especificar)", receta: null }
+
+  - dia: 22
+    comida: { texto: "Tortilla de verduras con ensalada", receta: null }
+    cena: { texto: "Crema de puerro con parmesano", receta: "https://cookidoo.es/recipes/recipe/es-ES/r665286" }
+  - dia: 23
+    comida: { texto: "Atún a la plancha con judías verdes y patata cocida", receta: null }
+    cena: { texto: "Tortilla francesa de jamón cocido y queso", receta: null }
+  - dia: 24
+    comida: { texto: "Lasaña de calabacín (sustituyendo la pasta) con carne boloñesa, gratinada con nata y parmesano", receta: null }
+    cena: { texto: "Crema de lentejas", receta: "https://cookidoo.es/recipes/recipe/es-ES/r268174" }
+  - dia: 25
+    comida: { texto: "Dos huevos rellenos de gambas con ensalada de pasta integral (75% ensalada, 25% pasta)", receta: null }
+    cena: { texto: "Libre", receta: null }
+  - dia: 26
+    comida: { texto: "Bacalao a la plancha con ensalada de canónigos y aguacate", receta: null }
+    cena: { texto: "Hamburguesa de ternera con calabacín pochado", receta: null }
+  - dia: 27
+    comida: { texto: "Pollo al horno con champiñones al ajillo y arroz basmati", receta: null }
+    cena: { texto: "Revuelto de champiñones y gambas", receta: null }
+  - dia: 28
+    comida: { texto: "Salmón a la plancha con tomates aliñados con orégano", receta: null }
+    cena: { texto: "Crema (sin especificar)", receta: null }
+
+  - dia: 29
+    comida: { texto: "Ensalada de espinacas con gulas y piña, filete de secreto de cerdo", receta: null }
+    comida_alt: { texto: "Espaguetis carbonara, tortilla de calabacín", receta: null }
+    cena: { texto: "Crema de vichyssoise, pescado", receta: null }
+    cena_alt: { texto: "Crema de espárragos, merluza", receta: null }
+  - dia: 30
+    comida: { texto: "Burrito de ternera, ensalada", receta: null }
+    comida_alt: { texto: "Arroz con tomate, ragú de ternera, yogur", receta: null }
+    cena: { texto: "Menestra de verduras, pavo al horno", receta: null }
+    cena_alt: { texto: "Filete de cerdo, cala-pizza", receta: null }
+  - dia: 31
+    comida: { texto: "Lentejas con chorizo y arroz", receta: null }
+    comida_alt: { texto: "Sopa de fideos, merluza en salsa", receta: null }
+    cena: { texto: "Crema de zanahoria, solomillo de cerdo", receta: null }
+    cena_alt: { texto: "Crema de verduras, filete de pavo/pollo", receta: null }
+  - dia: 32
+    comida: { texto: "Judías verdes con patata", receta: null }
+    comida_alt: { texto: "Judías blancas, salchichas de pollo, yogur", receta: null }
+    cena: { texto: "Minestrone, salmón a la plancha", receta: null }
+    cena_alt: { texto: "Sopa de verduras, salmón a la plancha (tosta de salmón)", receta: null }
+  - dia: 33
+    comida: { texto: "Lentejas con chorizo y arroz", receta: null }
+    comida_alt: { texto: "Paella, fogonero al horno", receta: null }
+    cena: { texto: "Puré de verdura, tortilla francesa", receta: null }
+    cena_alt: { texto: "Lentejas con verduras, tortilla francesa", receta: null }
+  - dia: 34
+    comida: { texto: "Ensalada de quinoa, bacalao al horno", receta: null }
+    cena: { texto: null }
+    cena_alt: { texto: "Ensalada de aguacate, kiwi y tomate", receta: null }
+  - dia: 35
+    comida: { texto: "Pollo al curry con calabacín, arroz blanco", receta: null }
+    cena: { texto: null }
+
+  - dia: 36
+    comida: { texto: "Ensalada de espinacas con gulas y piña (resto sin definir)", receta: null }
+    cena: { texto: "Ensalada de quinoa y pera", receta: null }
+  - dia: 37
+    comida: { texto: null }
+    cena: { texto: null }
+  - dia: 38
+    comida: { texto: null }
+    cena: { texto: null }
+  - dia: 39
+    comida: { texto: null }
+    cena: { texto: null }
+  - dia: 40
+    comida: { texto: null }
+    cena: { texto: null }
+  - dia: 41
+    comida: { texto: null }
+    cena: { texto: null }
+  - dia: 42
+    comida: { texto: null }
+    cena: { texto: null }
