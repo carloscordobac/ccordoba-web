@@ -1,0 +1,93 @@
+---
+---
+
+<div
+  id="cookie-consent"
+  class="fixed inset-x-0 bottom-0 z-[100] hidden border-t border-black/10 bg-ink px-6 py-4 text-paper shadow-lg"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Aviso de cookies"
+>
+  <div
+    class="mx-auto flex max-w-[1040px] flex-col items-center gap-4 sm:flex-row sm:justify-between"
+  >
+    <p class="text-sm leading-relaxed text-paper/90">
+      Este sitio usa cookies de analítica (Google Analytics) para entender cómo se usa. Puedes
+      aceptarlas o rechazarlas.
+    </p>
+    <div class="flex shrink-0 gap-3">
+      <button
+        type="button"
+        id="cookie-reject"
+        class="rounded-full border border-paper/30 px-4 py-2 text-sm font-medium text-paper transition hover:bg-paper/10"
+      >
+        Rechazar
+      </button>
+      <button
+        type="button"
+        id="cookie-accept"
+        class="rounded-full bg-senal px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90"
+      >
+        Aceptar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const GA_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+  const CONSENT_KEY = "cookie-consent";
+
+  // Solo se llama tras un "Aceptar" explícito (en el momento o en una visita
+  // anterior). Nunca se invoca si se ha rechazado o no hay decisión.
+  function cargarGoogleAnalytics() {
+    if (!GA_ID || (window as unknown as { __gaCargado?: boolean }).__gaCargado) return;
+    (window as unknown as { __gaCargado?: boolean }).__gaCargado = true;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
+    document.head.appendChild(script);
+
+    const w = window as unknown as { dataLayer: unknown[]; gtag: (...args: unknown[]) => void };
+    w.dataLayer = w.dataLayer || [];
+    w.gtag = function gtag(...args: unknown[]) {
+      w.dataLayer.push(args);
+    };
+    w.gtag("js", new Date());
+    w.gtag("config", GA_ID);
+  }
+
+  function iniciarConsentimientoCookies() {
+    const banner = document.getElementById("cookie-consent");
+    const btnAceptar = document.getElementById("cookie-accept");
+    const btnRechazar = document.getElementById("cookie-reject");
+    if (!banner || !btnAceptar || !btnRechazar) return;
+
+    const decision = localStorage.getItem(CONSENT_KEY);
+
+    if (decision === "accepted") {
+      cargarGoogleAnalytics();
+      return;
+    }
+
+    if (decision === "rejected") {
+      return;
+    }
+
+    banner.classList.remove("hidden");
+
+    btnAceptar.addEventListener("click", () => {
+      localStorage.setItem(CONSENT_KEY, "accepted");
+      banner.classList.add("hidden");
+      cargarGoogleAnalytics();
+    });
+
+    btnRechazar.addEventListener("click", () => {
+      localStorage.setItem(CONSENT_KEY, "rejected");
+      banner.classList.add("hidden");
+    });
+  }
+
+  iniciarConsentimientoCookies();
+</script>
