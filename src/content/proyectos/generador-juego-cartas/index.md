@@ -14,8 +14,8 @@ arquitectura:
   stack: ["Python", "Pillow", "librería de maquetación PDF"]
   notas: "Python, ejecutado desde VS Code con Claude Code como copiloto de desarrollo. Pillow para la generación de cada carta como imagen, y una librería de maquetación de PDF para componer el documento final imprimible."
 portada:
-  imagen: "./01-portada.png"
-  alt: "Mazo de cartas de trenes impreso, con el reverso de marca ccordoba.es y el anverso ilustrado a la vista"
+  imagen: "./02-recorte.jpg"
+  alt: "Cartas del mazo de trenes recién impresas, siendo recortadas a mano con cúter y regla sobre una base de corte"
 cuerpo_titulo: "Qué hace"
 descarga:
   titulo: "Descargar"

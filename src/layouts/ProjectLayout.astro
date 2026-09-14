@@ -126,17 +126,22 @@ const ogImage = imagenPortada?.src ?? (fotos.length > 0 ? fotos[0].img.src : und
 
       {
         imagenPortada && portada && (
-          <div class="mt-10 overflow-hidden rounded-md">
-            <img
-              src={imagenPortada.src}
-              width={imagenPortada.attributes.width}
-              height={imagenPortada.attributes.height}
-              alt={portada.alt}
-              class="w-full object-cover"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
+          <figure class="mt-10">
+            <div class="overflow-hidden rounded-md">
+              <img
+                src={imagenPortada.src}
+                width={imagenPortada.attributes.width}
+                height={imagenPortada.attributes.height}
+                alt={portada.alt}
+                class="w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <figcaption class="mt-2 font-mono text-[11px] text-[#8B8D93]">
+              {portada.alt}
+            </figcaption>
+          </figure>
         )
       }
 
