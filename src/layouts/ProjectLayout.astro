@@ -8,6 +8,18 @@ interface Galeria {
   caption: string;
 }
 
+interface Portada {
+  imagen: ImageMetadata;
+  alt: string;
+}
+
+interface Descarga {
+  titulo: string;
+  texto: string;
+  enlace: string;
+  etiqueta_boton: string;
+}
+
 interface Props {
   title: string;
   description: string;
@@ -25,8 +37,10 @@ interface Props {
     notas: string;
   };
   galeria?: Galeria[];
+  portada?: Portada;
   cuerpo_titulo: string;
   estado_actual?: string;
+  descarga?: Descarga;
 }
 
 const {
@@ -38,8 +52,10 @@ const {
   datos,
   arquitectura,
   galeria,
+  portada,
   cuerpo_titulo,
   estado_actual,
+  descarga,
 } = Astro.props;
 
 const fotos = galeria
@@ -51,9 +67,13 @@ const fotos = galeria
     )
   : [];
 
-// OG image: la primera foto de la galería si existe, si no, la que
-// SEO.astro usa por defecto (/images/og-default.png).
-const ogImage = fotos.length > 0 ? fotos[0].img.src : undefined;
+const imagenPortada = portada
+  ? await getImage({ src: portada.imagen, width: 1600, format: "webp", quality: 82 })
+  : undefined;
+
+// OG image: la portada si existe, si no la primera foto de la galería, si
+// no la que SEO.astro usa por defecto (/images/og-default.png).
+const ogImage = imagenPortada?.src ?? (fotos.length > 0 ? fotos[0].img.src : undefined);
 ---
 
 <BaseLayout title={`${title} | ccordoba.es`} description={description} image={ogImage}>
@@ -99,6 +119,22 @@ const ogImage = fotos.length > 0 ? fotos[0].img.src : undefined;
               loop
               playsinline
               controls
+            />
+          </div>
+        )
+      }
+
+      {
+        imagenPortada && portada && (
+          <div class="mt-10 overflow-hidden rounded-md">
+            <img
+              src={imagenPortada.src}
+              width={imagenPortada.attributes.width}
+              height={imagenPortada.attributes.height}
+              alt={portada.alt}
+              class="w-full object-cover"
+              loading="eager"
+              decoding="async"
             />
           </div>
         )
@@ -185,6 +221,24 @@ const ogImage = fotos.length > 0 ? fotos[0].img.src : undefined;
               Estado actual
             </p>
             <p class="text-[13px] leading-relaxed text-[#3C3F46]">{estado_actual}</p>
+          </div>
+        )
+      }
+
+      {
+        descarga && (
+          <div class="mt-10">
+            <h2 class="mb-1.5 font-display text-[16px] font-semibold text-ink">
+              {descarga.titulo}
+            </h2>
+            <p class="mb-4 text-[15px] leading-relaxed text-[#4B4E56]">{descarga.texto}</p>
+            <a
+              href={descarga.enlace}
+              download
+              class="inline-flex items-center gap-2 rounded-[3px] bg-senal px-[22px] py-[13px] font-mono text-[13px] text-paper transition-transform hover:-translate-y-px"
+            >
+              {descarga.etiqueta_boton}
+            </a>
           </div>
         )
       }

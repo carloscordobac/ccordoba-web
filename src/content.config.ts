@@ -17,6 +17,9 @@ const proyectos = defineCollection({
       categorias: z.array(z.string()).optional(),
       link: z.string(),
       order: z.number(),
+      // Destaca la tarjeta en la home con una pastilla "Nuevo". Opcional,
+      // por defecto false: no afecta a los proyectos existentes.
+      nuevo: z.boolean().default(false),
       // Capturas del proyecto (una o varias): coloca los archivos (jpg/png/webp)
       // dentro de la carpeta del proyecto y lístalos aquí, p. ej.
       // ["./01-resumen.png", "./02-detalle.png"]. Con más de una se muestran
@@ -53,11 +56,30 @@ const proyectos = defineCollection({
           }),
         )
         .optional(),
+      // Imagen de portada a ancho completo para la página de detalle, sin pie
+      // de foto visible (a diferencia de "galeria"). El "alt" es obligatorio
+      // para accesibilidad aunque no se muestre ningún texto en pantalla.
+      portada: z
+        .object({
+          imagen: image(),
+          alt: z.string(),
+        })
+        .optional(),
       // Título de la sección de cuerpo (el contenido Markdown del archivo).
       // Por defecto "Cómo funciona"; algún proyecto especial puede cambiarlo
       // (p. ej. "Cómo está construida" para ccordoba-web).
       cuerpo_titulo: z.string().default("Cómo funciona"),
       estado_actual: z.string().optional(),
+      // Sección final de descarga (título + texto + botón). Se renderiza
+      // como la última sección de la página de detalle.
+      descarga: z
+        .object({
+          titulo: z.string(),
+          texto: z.string(),
+          enlace: z.string(),
+          etiqueta_boton: z.string(),
+        })
+        .optional(),
     }),
 });
 
