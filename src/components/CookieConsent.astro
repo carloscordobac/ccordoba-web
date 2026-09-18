@@ -51,8 +51,13 @@
 
     const w = window as unknown as { dataLayer: unknown[]; gtag: (...args: unknown[]) => void };
     w.dataLayer = w.dataLayer || [];
-    w.gtag = function gtag(...args: unknown[]) {
-      w.dataLayer.push(args);
+    // Importante: usar "arguments" (como el snippet oficial de gtag.js), no
+    // parámetros "rest" (...args). El motor de Google distingue entre el
+    // objeto "arguments" y un Array real, e ignora silenciosamente (sin
+    // ningún error en consola) los comandos empujados como Array — con lo
+    // que "config" nunca llega a registrarse y no se envía ningún hit.
+    w.gtag = function () {
+      w.dataLayer.push(arguments);
     };
     w.gtag("js", new Date());
     w.gtag("config", GA_ID);
