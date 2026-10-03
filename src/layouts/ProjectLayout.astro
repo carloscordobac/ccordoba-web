@@ -38,6 +38,7 @@ interface Props {
   };
   galeria?: Galeria[];
   portada?: Portada;
+  video_caption?: string;
   cuerpo_titulo: string;
   estado_actual?: string;
   descarga?: Descarga;
@@ -53,6 +54,7 @@ const {
   arquitectura,
   galeria,
   portada,
+  video_caption,
   cuerpo_titulo,
   estado_actual,
   descarga,
@@ -110,17 +112,24 @@ const ogImage = imagenPortada?.src ?? (fotos.length > 0 ? fotos[0].img.src : und
 
       {
         video && (
-          <div class="mt-10 aspect-video overflow-hidden rounded-md bg-ink/5">
-            <video
-              src={video}
-              class="h-full w-full object-cover"
-              autoplay
-              muted
-              loop
-              playsinline
-              controls
-            />
-          </div>
+          <figure class="mt-10">
+            <div class="aspect-video overflow-hidden rounded-md bg-ink/5">
+              <video
+                src={video}
+                class="h-full w-full object-cover"
+                autoplay
+                muted
+                loop
+                playsinline
+                controls
+              />
+            </div>
+            {video_caption && (
+              <figcaption class="mt-2 font-mono text-[11px] text-[#8B8D93]">
+                {video_caption}
+              </figcaption>
+            )}
+          </figure>
         )
       }
 

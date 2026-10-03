@@ -28,6 +28,8 @@ const proyectos = defineCollection({
       // Vídeo de portada (opcional, sustituye a las imágenes si está presente):
       // sube el .mp4 a /public/videos/ y pon aquí la ruta, p. ej. "/videos/mi-video.mp4".
       video: z.string().optional(),
+      // Pie de foto visible bajo el vídeo de la página de detalle.
+      video_caption: z.string().optional(),
 
       // Campos opcionales para la página de detalle (/proyectos/[slug]).
       // Si un proyecto no los define, esa sección se omite en el layout.
