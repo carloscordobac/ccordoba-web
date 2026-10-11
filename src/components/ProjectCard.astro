@@ -10,14 +10,27 @@ interface Props {
   video?: string;
   link?: string;
   nuevo?: boolean;
+  destacado?: boolean;
 }
 
-const { title, description, categorias = [], images, video, link, nuevo = false } = Astro.props;
+const {
+  title,
+  description,
+  categorias = [],
+  images,
+  video,
+  link,
+  nuevo = false,
+  destacado = false,
+} = Astro.props;
 const tieneEnlace = Boolean(link && link !== "#");
 const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
 ---
 
-<div class="relative flex flex-col overflow-hidden rounded-md border border-linea bg-white">
+<div
+  class="relative flex flex-col overflow-hidden rounded-md border border-linea bg-white"
+  data-tags={categorias.join(",")}
+>
   {
     nuevo && (
       <span class="absolute left-3 top-3 z-10 rounded-full bg-senal px-[9px] py-1 font-mono text-[10.5px] uppercase tracking-wide text-paper shadow-sm">
@@ -51,6 +64,13 @@ const esExterno = tieneEnlace && /^https?:\/\//.test(link as string);
   }
   <div class="px-6 pb-[26px] pt-[22px]">
     <div class="mb-2 flex flex-wrap gap-2">
+      {
+        destacado && (
+          <span class="rounded-full bg-senal px-[9px] py-1 font-mono text-[10.5px] uppercase tracking-wide text-paper">
+            Destacado
+          </span>
+        )
+      }
       {
         categorias.map((categoria) => (
           <span class="rounded-full bg-via px-[9px] py-1 font-mono text-[10.5px] text-senal">

@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FocusCard from "../components/FocusCard.astro";
+import CreditCard from "@lucide/astro/icons/credit-card";
+import ChartSpline from "@lucide/astro/icons/chart-spline";
+import FlaskConical from "@lucide/astro/icons/flask-conical";
+import Workflow from "@lucide/astro/icons/workflow";
+import Palette from "@lucide/astro/icons/palette";
+import ClipboardList from "@lucide/astro/icons/clipboard-list";
+
+const focos = [
+  {
+    icon: CreditCard,
+    title: "Sistemas de pago y ticketing",
+    description:
+      "Diseño de soluciones de comercialización: Account-Based Ticketing, pago abierto (EMV), modelos de post-pago. La evolución de los sistemas tradicionales hacia modelos de pago por uso.",
+  },
+  {
+    icon: ChartSpline,
+    title: "Información",
+    description:
+      "Obtener datos en tiempo real y convertirlos en algo que se entienda de un vistazo: gráficas, mapas animados, dashboards. Cuando una hoja de datos aburrida se convierte en algo que cuenta una historia.",
+  },
+  {
+    icon: FlaskConical,
+    title: "Prototipado",
+    description:
+      "La idea en movimiento: construcción ágil de visualizaciones, pruebas de concepto (PoC), y cualquier herramienta funcional que permita validar hipótesis y alinear equipos antes de dar luz verde.",
+  },
+  {
+    icon: Workflow,
+    title: "Automatización",
+    description:
+      "Scripts que hacen cosas por mí mientras duermo, flujos que antes me llevaban horas y ahora se disparan solos. Aquí es donde más pruebo límites: qué se puede delegar de verdad y qué todavía necesita ojo humano.",
+  },
+  {
+    icon: Palette,
+    title: "Diseño de producto",
+    description:
+      "Más allá del código: identidad de marca, prototipos visuales, y cualquier proyecto que combine funcionalidad y estética, de principio a fin.",
+  },
+  {
+    icon: ClipboardList,
+    title: "Gestión de proyectos",
+    description:
+      "Coordinar equipos y proveedores, liderar iniciativas complejas en entornos de alta criticidad, y llevarlas de la idea a la entrega. La parte menos visible de todo esto, pero la que sostiene lo demás.",
+  },
+];
+---
+
+<BaseLayout
+  title="Sobre mí | Carlos Córdoba Camacho"
+  description="Quién es Carlos Córdoba Camacho: desde 2006 en proyectos de tecnología, hoy en el sector ferroviario. Sus intereses y cómo trabaja."
+  personMainEntity="https://ccordoba.es/sobre-mi"
+>
+  <section id="quien-soy" class="relative overflow-hidden px-8 py-14">
+    <img
+      src="/images/vias-senal.png"
+      alt=""
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover opacity-[0.08]"
+    />
+    <div class="relative mx-auto max-w-[1040px]">
+      <div class="mb-11">
+        <h2 class="font-display text-[28px] font-semibold">Quién soy</h2>
+      </div>
+      <div>
+        <div class="space-y-[18px] text-base leading-relaxed text-[#3C3F46] md:columns-2 md:gap-14 md:space-y-0 [&>p]:mb-[18px] [&>p]:break-inside-avoid-column">
+          <p>
+            Soy un apasionado de la tecnología, de los que no pueden ver algo
+            nuevo sin querer entender cómo funciona por dentro. Llevo desde
+            2006 metido en proyectos de tecnología de todo tipo. Empecé mi
+            carrera en consultoría, donde aprendí lo que
+            significa la excelencia: exigirme más de lo que me exigían,
+            entregar trabajo de máxima calidad e ir siempre un paso más allá.
+          </p>
+          <p>
+            Luego llegué a Renfe, y con ella descubrí algo que no esperaba:
+            el mundo ferroviario y, sobre todo, la vocación de servicio
+            público. Ahora trabajo liderando proyectos de transformación
+            digital en los sistemas de viajeros, y sigo sin aburrirme.
+          </p>
+          <p>
+            Este sitio no es un currículum, es más bien mi cuaderno de
+            pruebas: un lugar donde voy documentando lo que construyo en mi
+            tiempo libre, relacionado con el transporte público y la
+            digitalización. Todo ello utilizando la IA, lo que me permite
+            aprender y desarrollar proyectos que sin ella serían imposibles.
+          </p>
+          <p>
+            No siempre sale bien a la primera, pero esa es un poco la
+            gracia: aprender en público, enseñando el proceso y no solo el
+            resultado.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="que-hago" class="border-t border-linea px-8 py-14">
+    <div class="mx-auto max-w-[1040px]">
+      <div class="mb-11">
+        <h2 class="font-display text-[28px] font-semibold">Mis intereses</h2>
+      </div>
+      <div class="grid grid-cols-1 gap-px border border-linea bg-linea sm:grid-cols-2">
+        {focos.map((foco) => <FocusCard icon={foco.icon} title={foco.title} description={foco.description} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

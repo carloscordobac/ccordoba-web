@@ -5,6 +5,7 @@ tags: ["Python", "Pillow", "PDF"]
 categorias: ["Automatización", "Diseño"]
 link: "/proyectos/generador-juego-cartas/"
 order: 0
+date: 2026-09-14
 nuevo: true
 images:
   - "./01-portada.png"

@@ -1,14 +1,18 @@
 ---
-const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-linea bg-via/30 px-8 py-10">
-  <div class="mx-auto flex max-w-[1040px] flex-wrap items-end justify-between gap-6">
-    <div class="flex-1">
-      <p class="text-[15px] leading-relaxed text-[#54575F]">
-        Ando por LinkedIn casi todas las semanas escribiendo sobre todo esto.
-      </p>
-      <div class="mt-5">
+<footer class="border-t border-linea">
+  <div class="bg-via px-8 py-7">
+    <div class="mx-auto flex max-w-[1040px] flex-wrap items-center justify-between gap-6">
+      <div>
+        <h2 class="mb-1.5 font-display text-2xl font-semibold text-ink">¿Hablamos?</h2>
+        <p class="max-w-[560px] text-[15px] leading-relaxed text-[#4B4E56]">
+          Ando por LinkedIn casi todas las semanas escribiendo sobre todo esto.
+          Si algo de aquí te ha resultado útil, o simplemente quieres charlar,
+          ahí me tienes.
+        </p>
+      </div>
+      <div class="flex shrink-0 flex-wrap gap-3">
         <a
           href="https://linkedin.com/in/carloscordobacamacho"
           target="_blank"
@@ -17,11 +21,31 @@ const year = new Date().getFullYear();
         >
           LinkedIn ↗
         </a>
+        {/* Segundo botón (email) pendiente: se añadirá aquí, en esta misma fila. */}
       </div>
     </div>
-    <div class="text-right font-mono text-xs leading-relaxed text-[#8B8D93]">
-      ccordoba.es<br />
-      {year}
+  </div>
+
+  <div class="bg-ink px-8 py-8 text-paper">
+    <div class="mx-auto max-w-[1040px]">
+      <div class="flex flex-wrap items-center justify-between gap-5">
+        <div class="flex items-center gap-3">
+          <img
+            src="/images/logo-ccordoba-blanco.png"
+            alt="ccordoba.es"
+            class="h-10 w-auto"
+          />
+          <span class="text-sm text-paper/60">El laboratorio de Carlos Córdoba Camacho</span>
+        </div>
+        <nav class="flex flex-wrap gap-5 font-mono text-[13px]">
+          <a href="/sobre-mi" class="text-paper/80 transition-colors hover:text-via">
+            Sobre mí
+          </a>
+          <a href="/proyectos" class="text-paper/80 transition-colors hover:text-via">
+            Proyectos
+          </a>
+        </nav>
+      </div>
     </div>
   </div>
 </footer>

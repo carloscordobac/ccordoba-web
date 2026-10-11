@@ -5,7 +5,9 @@ tags: ["Tiempo real", "Datos abiertos", "Mapa", "Mac"]
 categorias: ["Tiempo real", "Datos abiertos", "Mapa"]
 link: "/proyectos/renfe-en-relieve/"
 order: -1
+date: 2026-10-03
 nuevo: true
+en_home: true
 video: "/videos/proyectos/renfe-en-relieve/preview.mp4"
 video_caption: "Una jornada ferroviaria convertida en relieve, movimiento y luz"
 objetivo: "Crear una forma más intuitiva y memorable de explorar la actividad ferroviaria, no solo mostrando dónde está cada tren en un momento concreto, sino revelando qué zonas concentran más circulación a lo largo de una jornada completa. La aplicación permite elegir un día capturado, cambiar la resolución del análisis, filtrar por producto comercial (AVE, AVLO, Alvia, Euromed, Media Distancia, Regional o Intercity) y reproducir el transcurso del día para observar cómo se activa la red."

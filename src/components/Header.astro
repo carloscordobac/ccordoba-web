@@ -1,4 +1,13 @@
 ---
+const ruta = Astro.url.pathname;
+const esSobreMi = ruta === "/sobre-mi" || ruta === "/sobre-mi/";
+const esProyectos = ruta.startsWith("/proyectos");
+
+function clases(activo: boolean) {
+  return activo
+    ? "text-senal opacity-100"
+    : "text-ink/75 transition-opacity hover:text-senal hover:opacity-100";
+}
 ---
 
 <nav class="sticky top-0 z-10 border-b border-linea bg-via/50 px-8 backdrop-blur-sm">
@@ -11,9 +20,12 @@
       />
     </a>
     <div class="hidden gap-7 font-mono text-[13px] sm:flex">
-      <a href="/#quien-soy" class="text-ink/75 transition-opacity hover:text-senal hover:opacity-100">quién soy</a>
-      <a href="/#que-hago" class="text-ink/75 transition-opacity hover:text-senal hover:opacity-100">mis intereses</a>
-      <a href="/#laboratorio" class="text-ink/75 transition-opacity hover:text-senal hover:opacity-100">laboratorio</a>
+      <a href="/sobre-mi" aria-current={esSobreMi ? "page" : undefined} class={clases(esSobreMi)}>
+        sobre mí
+      </a>
+      <a href="/proyectos" aria-current={esProyectos ? "page" : undefined} class={clases(esProyectos)}>
+        proyectos
+      </a>
     </div>
   </div>
 </nav>

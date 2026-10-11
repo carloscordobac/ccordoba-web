@@ -5,6 +5,7 @@ tags: ["Astro", "Tailwind", "IA"]
 categorias: ["Web"]
 link: "/proyectos/ccordoba-web/"
 order: 2
+date: 2026-07-15
 images:
   - "./01-portada.png"
 objetivo: "Tener un sitio propio donde documentar el resto de proyectos, y de paso servir como ejemplo en sí mismo de hasta dónde se puede llegar hoy prototipando con asistencia de IA sin ser desarrollador web de formación."

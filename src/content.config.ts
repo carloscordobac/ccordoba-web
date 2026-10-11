@@ -16,10 +16,26 @@ const proyectos = defineCollection({
       // "tags" a propósito, para no mezclar stack técnico con categoría.
       categorias: z.array(z.string()).optional(),
       link: z.string(),
+      // URL externa donde el proyecto puede probarse en vivo (p. ej. un
+      // subdominio propio). Opcional: solo los proyectos con una demo real
+      // la definen; alimenta el botón "Ver en vivo" de la ficha.
+      live_url: z.string().optional(),
       order: z.number(),
+      // Fecha del proyecto, usada para ordenar en la home y en /proyectos
+      // (descendente). Los proyectos existentes usan la fecha de su primer
+      // commit en git, por no tener un dato "real" de fecha de publicación.
+      date: z.coerce.date(),
       // Destaca la tarjeta en la home con una pastilla "Nuevo". Opcional,
       // por defecto false: no afecta a los proyectos existentes.
       nuevo: z.boolean().default(false),
+      // El proyecto sale en el grid "El laboratorio" de la home (máximo 4,
+      // ordenados por fecha descendente, con los nuevo:true siempre primero).
+      // El resto de proyectos solo aparece en /proyectos.
+      en_home: z.boolean().default(false),
+      // El proyecto ocupa el bloque de ancho completo de la home, por
+      // encima del grid. Solo puede haber UNO con destacado:true a la vez
+      // — src/pages/index.astro lanza un error en build si hay más de uno.
+      destacado: z.boolean().default(false),
       // Capturas del proyecto (una o varias): coloca los archivos (jpg/png/webp)
       // dentro de la carpeta del proyecto y lístalos aquí, p. ej.
       // ["./01-resumen.png", "./02-detalle.png"]. Con más de una se muestran

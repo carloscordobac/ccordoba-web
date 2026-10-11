@@ -39,6 +39,7 @@ interface Props {
   galeria?: Galeria[];
   portada?: Portada;
   video_caption?: string;
+  live_url?: string;
   cuerpo_titulo: string;
   estado_actual?: string;
   descarga?: Descarga;
@@ -55,6 +56,7 @@ const {
   galeria,
   portada,
   video_caption,
+  live_url,
   cuerpo_titulo,
   estado_actual,
   descarga,
@@ -82,10 +84,10 @@ const ogImage = imagenPortada?.src ?? (fotos.length > 0 ? fotos[0].img.src : und
   <section class="border-t border-linea">
     <div class="mx-auto max-w-[1040px] px-8 py-14">
       <a
-        href="/#laboratorio"
+        href="/proyectos"
         class="mb-6 inline-flex items-center gap-1.5 font-mono text-[12px] text-senal transition-opacity hover:opacity-70"
       >
-        ← Volver al laboratorio
+        ← Volver a proyectos
       </a>
 
       <h1 class="mb-3 font-display text-[28px] font-semibold sm:text-[34px]">{title}</h1>
@@ -100,6 +102,22 @@ const ogImage = imagenPortada?.src ?? (fotos.length > 0 ? fotos[0].img.src : und
           ))
         }
       </div>
+
+      {
+        live_url && (
+          <div class="mt-6">
+            <a
+              href={live_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group inline-flex items-center gap-2 rounded-[3px] bg-senal px-[22px] py-[13px] font-mono text-[13px] text-paper transition-transform hover:-translate-y-px"
+            >
+              Ver en vivo
+              <span class="inline-block transition-transform group-hover:translate-x-1">↗</span>
+            </a>
+          </div>
+        )
+      }
 
       {
         objetivo && (

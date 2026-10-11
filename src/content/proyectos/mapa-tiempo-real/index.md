@@ -5,6 +5,8 @@ tags: ["GPS", "Leaflet", "Python"]
 categorias: ["Datos abiertos", "Tiempo real", "Mapa"]
 link: "/proyectos/mapa-tiempo-real/"
 order: 4
+date: 2026-07-15
+en_home: true
 video: "/videos/mapa-tiempo-real.mp4"
 objetivo: "Ver el movimiento real de los trenes sobre el mapa, no solo datos tabulados, y de paso comparar qué operadores ferroviarios del mundo publican de verdad su posición GPS en abierto y cuáles no."
 datos:

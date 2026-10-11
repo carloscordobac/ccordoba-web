@@ -12,6 +12,9 @@ interface Props {
   image?: string;
   type?: "website" | "article";
   noindex?: boolean;
+  // Página de perfil del schema.org/Person (p. ej. /sobre-mi). Opcional:
+  // si no se indica, el JSON-LD se publica sin mainEntityOfPage.
+  personMainEntity?: string;
 }
 
 const {
@@ -20,6 +23,7 @@ const {
   image,
   type,
   noindex = false,
+  personMainEntity,
 } = Astro.props;
 
 const personSchema = {
@@ -33,6 +37,7 @@ const personSchema = {
     "@type": "Organization",
     name: "Renfe Viajeros",
   },
+  ...(personMainEntity && { mainEntityOfPage: personMainEntity }),
 };
 ---
 

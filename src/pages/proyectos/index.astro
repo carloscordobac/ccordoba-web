@@ -1,0 +1,179 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+const META = ["identidad-marca", "ccordoba-web"];
+
+function ordenar(a: (typeof todos)[number], b: (typeof todos)[number]) {
+  if (a.data.destacado !== b.data.destacado) return a.data.destacado ? -1 : 1;
+  if (a.data.nuevo !== b.data.nuevo) return a.data.nuevo ? -1 : 1;
+  const porFecha = b.data.date.getTime() - a.data.date.getTime();
+  if (porFecha !== 0) return porFecha;
+  return a.data.order - b.data.order;
+}
+
+const todos = await getCollection("proyectos");
+const principales = todos.filter((p) => !META.includes(p.id)).sort(ordenar);
+const sobreElSitio = todos.filter((p) => META.includes(p.id)).sort(ordenar);
+
+// Lista de categorías únicas, generada a partir de los datos (no a mano),
+// para que un tag nuevo en cualquier proyecto aparezca solo como chip.
+const categorias = [
+  ...new Set(todos.flatMap((p) => p.data.categorias ?? [])),
+].sort((a, b) => a.localeCompare(b, "es"));
+---
+
+<BaseLayout
+  title="Proyectos | ccordoba"
+  description="Los experimentos del laboratorio de Carlos Córdoba Camacho: mapas, dashboards y visualizaciones con datos abiertos de transporte."
+>
+  <section class="border-t border-linea px-8 py-14">
+    <div class="mx-auto max-w-[1040px]">
+      <h1 class="mb-3 font-display text-[28px] font-semibold sm:text-[34px]">Proyectos</h1>
+      <p class="mb-10 max-w-[640px] text-base leading-relaxed text-[#4B4E56]">
+        Todo lo que voy construyendo en el laboratorio. Algunas cosas están
+        pulidas, otras son pruebas a medio hacer.
+      </p>
+
+      <div
+        role="group"
+        aria-label="Filtrar proyectos por categoría"
+        class="mb-4 flex flex-wrap gap-2"
+        data-filtros
+      >
+        <button
+          type="button"
+          data-chip
+          data-tag="Todos"
+          aria-pressed="true"
+          class="rounded-full bg-senal px-[14px] py-[7px] font-mono text-[12px] text-paper transition-colors"
+        >
+          Todos
+        </button>
+        {
+          categorias.map((categoria) => (
+            <button
+              type="button"
+              data-chip
+              data-tag={categoria}
+              aria-pressed="false"
+              class="rounded-full bg-via px-[14px] py-[7px] font-mono text-[12px] text-senal transition-colors"
+            >
+              {categoria}
+            </button>
+          ))
+        }
+      </div>
+
+      <p class="mb-10 font-mono text-[12px] text-[#8B8D93]" aria-live="polite" data-contador>
+        Mostrando {todos.length} proyectos
+      </p>
+
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2" data-grid-principal>
+        {
+          principales.map((proyecto) => (
+            <ProjectCard
+              title={proyecto.data.title}
+              description={proyecto.data.description}
+              categorias={proyecto.data.categorias}
+              images={proyecto.data.images}
+              video={proyecto.data.video}
+              link={proyecto.data.link}
+              nuevo={proyecto.data.nuevo}
+              destacado={proyecto.data.destacado}
+            />
+          ))
+        }
+      </div>
+
+      <div data-grupo-meta>
+        <div class="mb-6 mt-16 flex items-baseline gap-3.5">
+          <h2 class="font-display text-[20px] font-semibold text-ink">Sobre este sitio</h2>
+        </div>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2" data-grid-meta>
+          {
+            sobreElSitio.map((proyecto) => (
+              <ProjectCard
+                title={proyecto.data.title}
+                description={proyecto.data.description}
+                categorias={proyecto.data.categorias}
+                images={proyecto.data.images}
+                video={proyecto.data.video}
+                link={proyecto.data.link}
+                nuevo={proyecto.data.nuevo}
+                destacado={proyecto.data.destacado}
+              />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function setupFiltroProyectos() {
+    const contenedor = document.querySelector<HTMLElement>("[data-filtros]");
+    const contador = document.querySelector<HTMLElement>("[data-contador]");
+    const grupoMeta = document.querySelector<HTMLElement>("[data-grupo-meta]");
+    if (!contenedor || !contador || !grupoMeta) return;
+    if (contenedor.dataset.bound) return;
+    contenedor.dataset.bound = "true";
+
+    const chips = Array.from(contenedor.querySelectorAll<HTMLButtonElement>("[data-chip]"));
+    const tarjetas = Array.from(document.querySelectorAll<HTMLElement>("[data-tags]"));
+
+    function activarChip(tag: string) {
+      chips.forEach((chip) => {
+        const activo = chip.dataset.tag === tag;
+        chip.setAttribute("aria-pressed", String(activo));
+        chip.classList.toggle("bg-senal", activo);
+        chip.classList.toggle("text-paper", activo);
+        chip.classList.toggle("bg-via", !activo);
+        chip.classList.toggle("text-senal", !activo);
+      });
+    }
+
+    function aplicarFiltro(tag: string) {
+      let visibles = 0;
+      tarjetas.forEach((tarjeta) => {
+        const tagsTarjeta = (tarjeta.dataset.tags ?? "").split(",");
+        const coincide = tag === "Todos" || tagsTarjeta.includes(tag);
+        tarjeta.hidden = !coincide;
+        if (coincide) visibles += 1;
+      });
+
+      const metaVisible = Array.from(
+        grupoMeta.querySelectorAll<HTMLElement>("[data-tags]"),
+      ).some((t) => !t.hidden);
+      grupoMeta.hidden = !metaVisible;
+
+      contador.textContent = `Mostrando ${visibles} ${visibles === 1 ? "proyecto" : "proyectos"}`;
+      activarChip(tag);
+    }
+
+    function irA(tag: string, actualizarUrl: boolean) {
+      aplicarFiltro(tag);
+      if (!actualizarUrl) return;
+      const url = new URL(window.location.href);
+      if (tag === "Todos") {
+        url.searchParams.delete("tag");
+      } else {
+        url.searchParams.set("tag", tag);
+      }
+      window.history.replaceState({}, "", url);
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => irA(chip.dataset.tag ?? "Todos", true));
+    });
+
+    const tagInicial = new URLSearchParams(window.location.search).get("tag");
+    const chipValido = tagInicial && chips.some((c) => c.dataset.tag === tagInicial);
+    irA(chipValido ? (tagInicial as string) : "Todos", false);
+  }
+
+  setupFiltroProyectos();
+  document.addEventListener("astro:page-load", setupFiltroProyectos);
+</script>

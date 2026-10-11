@@ -1,0 +1,108 @@
+---
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  description: string;
+  categorias?: string[];
+  link: string;
+  liveUrl: string;
+  video?: string;
+  imagen?: ImageMetadata;
+  imagenAlt?: string;
+}
+
+const {
+  title,
+  description,
+  categorias = [],
+  link,
+  liveUrl,
+  video,
+  imagen,
+  imagenAlt = title,
+} = Astro.props;
+
+const imagenOptimizada = imagen
+  ? await getImage({ src: imagen, width: 960, format: "webp", quality: 82 })
+  : undefined;
+---
+
+<section class="border-t border-linea bg-[#F5F4F2] px-8 py-12">
+  <div class="mx-auto max-w-[1040px]">
+    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
+      <div class="order-2 lg:order-1">
+        <div class="mb-4 flex items-center gap-2.5 font-mono text-xs uppercase tracking-[0.08em] text-senal">
+          <span class="h-1.5 w-1.5 rounded-full bg-senal"></span>
+          Proyecto destacado
+        </div>
+
+        <div class="mb-3 flex flex-wrap gap-2">
+          {
+            categorias.map((categoria) => (
+              <span class="rounded-full bg-white px-[9px] py-1 font-mono text-[10.5px] text-senal">
+                {categoria}
+              </span>
+            ))
+          }
+        </div>
+
+        <h2 class="mb-3 font-display text-[26px] font-semibold text-ink sm:text-[32px]">
+          {title}
+        </h2>
+        <p class="max-w-[480px] text-[15px] leading-relaxed text-[#4B4E56]">
+          {description}
+        </p>
+
+        <div class="mt-7 flex flex-wrap gap-3.5">
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-2 rounded-[3px] bg-senal px-[22px] py-[13px] font-mono text-[13px] text-paper transition-transform hover:-translate-y-px"
+          >
+            Abrir {title}
+            <span class="inline-block transition-transform group-hover:translate-x-1">↗</span>
+          </a>
+          <a
+            href={link}
+            class="group inline-flex items-center gap-2 rounded-[3px] border border-senal/30 px-[22px] py-[13px] font-mono text-[13px] text-senal transition-transform hover:-translate-y-px"
+          >
+            Cómo está hecho
+            <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="order-1 overflow-hidden rounded-md shadow-sm lg:order-2">
+        {
+          video ? (
+            <div class="aspect-video bg-ink/5">
+              <video
+                src={video}
+                class="h-full w-full object-cover"
+                autoplay
+                muted
+                loop
+                playsinline
+              />
+            </div>
+          ) : (
+            imagenOptimizada && (
+              <img
+                src={imagenOptimizada.src}
+                width={imagenOptimizada.attributes.width}
+                height={imagenOptimizada.attributes.height}
+                alt={imagenAlt}
+                class="aspect-video w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            )
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

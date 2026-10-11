@@ -5,6 +5,8 @@ tags: ["GTFS-RT", "Python", "React"]
 categorias: ["Datos abiertos", "Tiempo real", "Dashboard"]
 link: "/proyectos/monitor-puntualidad/"
 order: 3
+date: 2026-07-15
+en_home: true
 images:
   - "./01-resumen.png"
   - "./02-trenes-activos.png"

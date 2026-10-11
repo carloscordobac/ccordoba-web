@@ -5,6 +5,7 @@ tags: ["EGIF", "Leaflet", "Python"]
 categorias: ["Datos abiertos", "Histórico", "Mapa"]
 link: "/proyectos/incendios-forestales/"
 order: 5
+date: 2026-07-26
 video: "/videos/incendios-forestales.mp4"
 objetivo: "Visualizar la evolución histórica de los incendios forestales en España de forma que se entienda de un vistazo, mismo enfoque de 'replay temporal' que ya usé para los trenes, aplicado a otro tipo de dato geolocalizado."
 datos:

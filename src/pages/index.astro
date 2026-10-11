@@ -1,57 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import FocusCard from "../components/FocusCard.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import FeaturedProject from "../components/FeaturedProject.astro";
 import { getCollection } from "astro:content";
-import CreditCard from "@lucide/astro/icons/credit-card";
-import ChartSpline from "@lucide/astro/icons/chart-spline";
-import FlaskConical from "@lucide/astro/icons/flask-conical";
-import Workflow from "@lucide/astro/icons/workflow";
-import Palette from "@lucide/astro/icons/palette";
-import ClipboardList from "@lucide/astro/icons/clipboard-list";
 
-const proyectos = (await getCollection("proyectos")).sort(
-  (a, b) => a.data.order - b.data.order
-);
+const proyectos = await getCollection("proyectos");
 
-const focos = [
-  {
-    icon: CreditCard,
-    title: "Sistemas de pago y ticketing",
-    description:
-      "Diseño de soluciones de comercialización: Account-Based Ticketing, pago abierto (EMV), modelos de post-pago. La evolución de los sistemas tradicionales hacia modelos de pago por uso.",
-  },
-  {
-    icon: ChartSpline,
-    title: "Información",
-    description:
-      "Obtener datos en tiempo real y convertirlos en algo que se entienda de un vistazo: gráficas, mapas animados, dashboards. Cuando una hoja de datos aburrida se convierte en algo que cuenta una historia.",
-  },
-  {
-    icon: FlaskConical,
-    title: "Prototipado",
-    description:
-      "La idea en movimiento: construcción ágil de visualizaciones, pruebas de concepto (PoC), y cualquier herramienta funcional que permita validar hipótesis y alinear equipos antes de dar luz verde.",
-  },
-  {
-    icon: Workflow,
-    title: "Automatización",
-    description:
-      "Scripts que hacen cosas por mí mientras duermo, flujos que antes me llevaban horas y ahora se disparan solos. Aquí es donde más pruebo límites: qué se puede delegar de verdad y qué todavía necesita ojo humano.",
-  },
-  {
-    icon: Palette,
-    title: "Diseño de producto",
-    description:
-      "Más allá del código: identidad de marca, prototipos visuales, y cualquier proyecto que combine funcionalidad y estética, de principio a fin.",
-  },
-  {
-    icon: ClipboardList,
-    title: "Gestión de proyectos",
-    description:
-      "Coordinar equipos y proveedores, liderar iniciativas complejas en entornos de alta criticidad, y llevarlas de la idea a la entrega. La parte menos visible de todo esto, pero la que sostiene lo demás.",
-  },
-];
+const candidatosDestacado = proyectos.filter((p) => p.data.destacado);
+if (candidatosDestacado.length > 1) {
+  throw new Error(
+    `Solo puede haber un proyecto con destacado:true. Encontrados: ${candidatosDestacado
+      .map((p) => p.id)
+      .join(", ")}`,
+  );
+}
+const destacado = candidatosDestacado[0];
+
+const enHome = proyectos
+  .filter((p) => p.data.en_home && p.id !== destacado?.id)
+  .sort((a, b) => {
+    if (a.data.nuevo !== b.data.nuevo) return a.data.nuevo ? -1 : 1;
+    return b.data.date.getTime() - a.data.date.getTime();
+  })
+  .slice(0, 4);
 ---
 
 <BaseLayout>
@@ -77,6 +48,12 @@ const focos = [
             class="inline-flex items-center gap-2 rounded-[3px] bg-senal px-[22px] py-[13px] font-mono text-[13px] text-white transition-transform hover:-translate-y-px"
           >
             Ver proyectos ↓
+          </a>
+          <a
+            href="/sobre-mi"
+            class="inline-flex items-center gap-2 rounded-[3px] border border-linea px-[22px] py-[13px] font-mono text-[13px] text-ink transition-transform hover:-translate-y-px"
+          >
+            Sobre mí
           </a>
           <a
             href="https://linkedin.com/in/carloscordobacamacho"
@@ -138,67 +115,24 @@ const focos = [
     </div>
   </header>
 
-  <section id="quien-soy" class="relative overflow-hidden border-t border-linea px-8 py-14">
-    <img
-      src="/images/vias-senal.png"
-      alt=""
-      aria-hidden="true"
-      class="pointer-events-none absolute inset-0 h-full w-full select-none object-cover opacity-[0.08]"
-    />
-    <div class="relative mx-auto max-w-[1040px]">
-      <div class="mb-11 flex items-baseline gap-3.5">
-        <span class="font-mono text-[13px] text-senal">01</span>
-        <h2 class="font-display text-[28px] font-semibold">Quién soy</h2>
-      </div>
-      <div>
-        <div class="space-y-[18px] text-base leading-relaxed text-[#3C3F46] md:columns-2 md:gap-14 md:space-y-0 [&>p]:mb-[18px] [&>p]:break-inside-avoid-column">
-          <p>
-            Soy un apasionado de la tecnología, de los que no pueden ver algo
-            nuevo sin querer entender cómo funciona por dentro. Llevo desde
-            2006 metido en proyectos de tecnología de todo tipo. Empecé mi
-            carrera en consultoría, donde aprendí lo que
-            significa la excelencia: exigirme más de lo que me exigían,
-            entregar trabajo de máxima calidad e ir siempre un paso más allá.
-          </p>
-          <p>
-            Luego llegué a Renfe, y con ella descubrí algo que no esperaba:
-            el mundo ferroviario y, sobre todo, la vocación de servicio
-            público. Ahora trabajo liderando proyectos de transformación
-            digital en los sistemas de viajeros, y sigo sin aburrirme.
-          </p>
-          <p>
-            Este sitio no es un currículum, es más bien mi cuaderno de
-            pruebas: un lugar donde voy documentando lo que construyo en mi
-            tiempo libre, relacionado con el transporte público y la
-            digitalización. Todo ello utilizando la IA, lo que me permite
-            aprender y desarrollar proyectos que sin ella serían imposibles.
-          </p>
-          <p>
-            No siempre sale bien a la primera, pero esa es un poco la
-            gracia: aprender en público, enseñando el proceso y no solo el
-            resultado.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="que-hago" class="border-t border-linea px-8 py-14">
-    <div class="mx-auto max-w-[1040px]">
-      <div class="mb-11 flex items-baseline gap-3.5">
-        <span class="font-mono text-[13px] text-senal">02</span>
-        <h2 class="font-display text-[28px] font-semibold">Mis intereses</h2>
-      </div>
-      <div class="grid grid-cols-1 gap-px border border-linea bg-linea sm:grid-cols-2">
-        {focos.map((foco) => <FocusCard icon={foco.icon} title={foco.title} description={foco.description} />)}
-      </div>
-    </div>
-  </section>
+  {
+    destacado && (
+      <FeaturedProject
+        title={destacado.data.title}
+        description={destacado.data.description}
+        categorias={destacado.data.categorias}
+        link={destacado.data.link}
+        liveUrl={destacado.data.live_url ?? destacado.data.link}
+        video={destacado.data.video}
+        imagen={destacado.data.portada?.imagen}
+        imagenAlt={destacado.data.portada?.alt}
+      />
+    )
+  }
 
   <section id="laboratorio" class="border-t border-linea px-8 py-14">
     <div class="mx-auto max-w-[1040px]">
-      <div class="mb-11 flex items-baseline gap-3.5">
-        <span class="font-mono text-[13px] text-senal">03</span>
+      <div class="mb-11">
         <h2 class="font-display text-[28px] font-semibold">El laboratorio</h2>
       </div>
       <p class="mb-12 text-base leading-relaxed text-[#4B4E56]">
@@ -209,7 +143,7 @@ const focos = [
       </p>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {
-          proyectos.map((proyecto) => (
+          enHome.map((proyecto) => (
             <ProjectCard
               title={proyecto.data.title}
               description={proyecto.data.description}
@@ -221,9 +155,15 @@ const focos = [
             />
           ))
         }
-        <div class="flex items-center justify-center rounded-md border border-dashed border-linea px-4 py-3 font-mono text-xs text-[#8B8D93] sm:col-span-2">
-          + hay más cosas en marcha
-        </div>
+      </div>
+      <div class="mt-12 text-center">
+        <a
+          href="/proyectos"
+          class="group inline-flex items-center gap-2 rounded-[3px] border border-linea px-[22px] py-[13px] font-mono text-[13px] text-ink transition-transform hover:-translate-y-px"
+        >
+          Ver todos los proyectos
+          <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+        </a>
       </div>
     </div>
   </section>
